@@ -1,0 +1,104 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // 0. Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- Helper Functions ---
+    function isSignedIn() { return request.auth != null; }
+    function isOwner(uid) { return isSignedIn() && request.auth.uid == uid; }
+    function isValidId(id) { return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); }
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+    
+    // --- Validation Helpers ---
+    
+    function isValidHistoryItem(data) {
+      return data.id is string && data.id.size() <= 128 &&
+             data.title is string && data.title.size() <= 200 &&
+             data.content is string && data.content.size() <= 1048576 && // 1MB
+             data.timestamp is number &&
+             data.uid == request.auth.uid;
+    }
+    
+    function isValidCustomExerciseType(data) {
+      return data.id is string && data.id.size() <= 128 &&
+             data.name is string && data.name.size() <= 100 &&
+             data.category is string &&
+             data.uid == request.auth.uid;
+    }
+    
+    function isValidCustomDesign(data) {
+      return data.id is string && data.id.size() <= 128 &&
+             data.name is string && data.name.size() <= 100 &&
+             data.html is string && data.html.size() <= 100000 &&
+             data.uid == request.auth.uid;
+    }
+    
+    function isValidStrictRule(data) {
+      return data.id is string && data.id.size() <= 128 &&
+             data.label is string && data.label.size() <= 200 &&
+             data.promptInjection is string && data.promptInjection.size() <= 5000 &&
+             data.active is bool &&
+             data.uid == request.auth.uid;
+    }
+    
+    function isValidUserSettings(data) {
+      return data.uid == request.auth.uid &&
+             (!('schoolName' in data) || (data.schoolName is string && data.schoolName.size() <= 200)) &&
+             (!('schoolAddress' in data) || (data.schoolAddress is string && data.schoolAddress.size() <= 500)) &&
+             (!('logoData' in data) || (data.logoData is string && data.logoData.size() <= 2097152)); // 2MB
+    }
+
+    // --- Collection Rules ---
+
+    match /history/{historyId} {
+      allow list: if isSignedIn() && resource.data.uid == request.auth.uid;
+      allow get: if isSignedIn() && resource.data.uid == request.auth.uid;
+      allow create: if isSignedIn() && isValidHistoryItem(incoming());
+      allow update: if isOwner(existing().uid) && isValidHistoryItem(incoming()) && incoming().uid == existing().uid;
+      allow delete: if isOwner(existing().uid);
+    }
+
+    match /customExerciseTypes/{typeId} {
+      allow list: if isSignedIn() && resource.data.uid == request.auth.uid;
+      allow get: if isSignedIn() && resource.data.uid == request.auth.uid;
+      allow create: if isSignedIn() && isValidCustomExerciseType(incoming());
+      allow update: if isOwner(existing().uid) && isValidCustomExerciseType(incoming()) && incoming().uid == existing().uid;
+      allow delete: if isOwner(existing().uid);
+    }
+
+    match /customDesigns/{designId} {
+      allow list: if isSignedIn() && resource.data.uid == request.auth.uid;
+      allow get: if isSignedIn() && resource.data.uid == request.auth.uid;
+      allow create: if isSignedIn() && isValidCustomDesign(incoming());
+      allow update: if isOwner(existing().uid) && isValidCustomDesign(incoming()) && incoming().uid == existing().uid;
+      allow delete: if isOwner(existing().uid);
+    }
+
+    match /strictRules/{ruleId} {
+      allow list: if isSignedIn() && resource.data.uid == request.auth.uid;
+      allow get: if isSignedIn() && resource.data.uid == request.auth.uid;
+      allow create: if isSignedIn() && isValidStrictRule(incoming());
+      allow update: if isOwner(existing().uid) && isValidStrictRule(incoming()) && incoming().uid == existing().uid;
+      allow delete: if isOwner(existing().uid);
+    }
+
+    match /masterProtocols/{protocolId} {
+      allow list: if isSignedIn() && resource.data.uid == request.auth.uid;
+      allow get: if isSignedIn() && resource.data.uid == request.auth.uid;
+      allow create: if isSignedIn() && isValidStrictRule(incoming());
+      allow update: if isOwner(existing().uid) && isValidStrictRule(incoming()) && incoming().uid == existing().uid;
+      allow delete: if isOwner(existing().uid);
+    }
+
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow create: if isOwner(userId) && isValidUserSettings(incoming());
+      allow update: if isOwner(userId) && isValidUserSettings(incoming()) && incoming().uid == existing().uid;
+    }
+  }
+}

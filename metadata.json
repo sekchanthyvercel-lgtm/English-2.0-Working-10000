@@ -1,0 +1,8 @@
+{
+  "name": "English 2.0 Working 10000",
+  "description": "A high-performance neural-powered reading and vocabulary test generation system for advanced educators.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": []
+}
