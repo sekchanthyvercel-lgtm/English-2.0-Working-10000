@@ -2395,13 +2395,13 @@ ${customHtml}
          - VARIETY: DO NOT repeat any idiom or phrasal verb. Use unique terms to boost speaking/vocabulary.
          - SOURCE: Extract phrases from the reading passage if provided.
          
-         [LEXICAL MIX MANDATE (CRITICAL!)]:
+         [LEXICAL MIX MANDATE (CRITICAL DOUBLE FIX!)]:
          You are FORBIDDEN from generating only standard single words. To boost students' vocabulary and speaking, you MUST inject phrases. 
-         In EVERY vocabulary exercise, strictly adhere to this mixture ratio (Scale per 10 items):
-         1. 10% Idioms (Strictly related to the topic of "${topic || fallbackTopic}").
-         2. 40% Phrases (MUST include Verb Phrases, Noun Phrases, or Phrasal Verbs related to the topic).
-         3. 50% Single Words (Advanced vocabulary based on level calibration).
-         Example: For a 15-item exercise, use ~1-2 Idioms, ~6 Phrases, ~7-8 Words.
+         In EVERY vocabulary exercise (Study Tables, MCQs, Matching, Word Boxes), strictly adhere to this mixture ratio (Scale per 10 items):
+         - 10% Idioms (Strictly related to the topic of "${topic || fallbackTopic}").
+         - 40% Phrases (MUST include Verb Phrases, Noun Phrases, or Phrasal Verbs related to the topic).
+         - 50% Single Words (Advanced vocabulary based on level calibration).
+         Example: For a 15-item exercise, use ~1-2 Idioms, ~6 multi-word Phrases, ~7-8 single Words. You MUST include phrases with more than 2 words.
          - [MATCHING LETTER MANDATE]: For EVERY matching exercise with 10 items, use letters A, B, C, D, E, F, G, H, I, J.
          
          You are strictly FORBIDDEN from testing grammar rules, injecting grammar errors, or including reading passages. 
@@ -2428,7 +2428,7 @@ ${customHtml}
 
     const isHighLevel = ['Level 5', 'Level 6', 'Level 7', 'Level 8', 'Level 9', 'Level 10', 'Level 11', 'Upper Intermediate', 'Advanced', 'IELTS', 'TOEFL'].includes(activeLevel);
     const levelComplexityInstruction = isHighLevel
-      ? `\n7. [SENTENCE MIX & CONTEXT MANDATE - CRITICAL]: This is an ADVANCED ${activeLevel} test. 
+      ? `\n7. [SENTENCE MIX & CONTEXT MANDATE]: This is an ADVANCED ${activeLevel} test. 
           - EVERY ITEM MUST provide deep context. FORBIDDEN from using single, isolated sentences for more than 50% of the items.
           - STRICT RATIO (For every 10 items):
             * 5 Items: Single sentence (Exactly 1 full stop '.')
@@ -2437,15 +2437,6 @@ ${customHtml}
           - I define a "sentence" by the presence of a full stop (.). If an item has only 1 full stop, it is ONE sentence.
           - MANDATORY: This mix is REQUIRED to boost reading comprehension skills.
           - Every item MUST embed the target in a context that requires critical thinking. FORBIDDEN from using only simple, short single sentences.`
-      : '';
-
-    const vocabularyLexicalInstruction = activeModule === 'Vocabulary'
-      ? `\n8. [LEXICAL MIX MANDATE (CRITICAL DOUBLE FIX)]: I am strictly enforcing the 10-40-50 ratio to ensure you don't output only single words.
-          For the total item count of ANY vocabulary part, you MUST output:
-          - 10% Idioms (Must use an idiom related to "${topic || fallbackTopic}")
-          - 40% Phrases (Must be multi-word Verb Phrases, Noun Phrases, or Phrasal Verbs)
-          - 50% Single Words (Advanced words related to "${topic || fallbackTopic}")
-          STRICT: Do not repeat terms. I MUST see phrasal verbs and multi-word verb phrases. FORBIDDEN from using only single words.`
       : '';
 
     const mandatorySequence = (activeModule === 'Grammar' 
@@ -2469,7 +2460,7 @@ ${componentList}
 3. [MODULE FIREWALL]: No grammar testing in vocabulary sections.
 4. [PART LIST]:
 ${componentList}
-5. [COMPLETENESS]: Generate every part listed below. Number items starting from 1.`) + levelComplexityInstruction + vocabularyLexicalInstruction;
+5. [COMPLETENESS]: Generate every part listed below. Number items starting from 1.`) + levelComplexityInstruction;
 
     const instructionRulerPrompt = instructionRulerStyle > 0 
       ? `[INSTRUCTION RULER - MANDATORY]: After EVERY instruction header (e.g., PART A: ...), you MUST insert a <div class="instruction-ruler-${instructionRulerStyle}"></div>. This is a visual separator that MUST be visible.
