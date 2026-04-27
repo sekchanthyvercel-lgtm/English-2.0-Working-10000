@@ -265,3 +265,15 @@ body {
   z-index: 99;
   border-radius: 20px 255px 15px 225px/225px 15px 255px 15px;
 }
+
+/* Ensure clean breaks for headers */
+.prose h3 {
+    margin-top: 25pt !important;
+    margin-bottom: 10pt !important;
+    border-bottom: 1pt solid #e2e8f0;
+    padding-bottom: 5pt;
+    color: #0f172a;
+    font-size: 14pt !important;
+    font-weight: 900 !important;
+    text-transform: uppercase;
+}

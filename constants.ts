@@ -1,6 +1,6 @@
 import { Theme, StrictRule, AcademicLevel, InstructionTemplate } from './types';
 
-export const INITIAL_MODULES = ['Grammar', 'Reading', 'Vocabulary', 'Listening'];
+export const INITIAL_MODULES = ['Grammar', 'Reading', 'Vocabulary'];
 
 export const LANGUAGES = ['English', 'Khmer', 'Chinese', 'Korean', 'French'];
 
@@ -80,6 +80,12 @@ export const PAPER_DESIGNS = [
 ];
 
 export const SUBJECTS = [
+  {
+    id: 'grammar_nodes',
+    name: 'Advanced Grammar',
+    names: ['Compound Subject (He and I)', 'The Manager', 'A group of students', 'Gerund (Swimming)', 'Nobody', 'Each applicant', 'Neither of them', 'The CEO', 'Possessive Pronoun (Hers)', 'Relative Clause'],
+    places: ['The Boardroom', 'The Research Lab', 'The Conference Centre', 'The Digital Hub', 'The University Hall', 'The Library Loft', 'The Innovation Park', 'The Global Summit', 'The Academic Plaza', 'The Strategy Room']
+  },
   {
     id: 'cambodia',
     name: 'Cambodia',
@@ -178,209 +184,74 @@ Enforce situational logic via prioritized rules.
 --- 🧠 COGNITIVE INTEGRITY (MANDATORY) ---
 1. [NEAR-MISS & HALLUCINATION PREVENTION]: 
     - EVERY MCQ/Correct & Incorrect/Circle question MUST have 1 contextually inferior "Near-Miss" distractor.
-    - STRICT: NEVER generate names (like Jade, Chloé, etc.) or facts that are NOT in the provided passage. If no passage is provided, only then use the localization names provided in Section 4. 
     - Accuracy is the #1 priority. Do not invent details outside the source text.
+2. [PROFESSIONAL SENTENCE VARIETY & INVERSION]:
+    - You MUST randomize sentence structures so they do not look identical.
+    - Rotate between simple, compound, and complex sentences.
+    - [SYNTACTIC SHUFFLE]: Vary the position of time markers and clauses.
+    - [MULTI-SENTENCE CONTEXT]: For higher levels (Level 5+), use 2 or 3 sentences for a single item to provide rich context/evidence. This is CRITICAL for Level 7+. Do NOT always use just one sentence.
+    - Example A: "At night, I go to sleep at 10. I love to read books before I sleep." (Fronted position + 2 sentences)
+    - Example B: "I go to sleep at 10 at night." (Standard position)
+    - Example C: "If you don't visit her, she is unhappy." (Conditional first)
+    - Example D: "She is unhappy if you don't visit her." (Main clause first)
+    - Apply this variety across ALL types of items to mimic human-designed tests.
 3. [READING PASSAGE PROTOCOL]:
     - ALL reading passages MUST be in normal sentence case. NEVER generate a reading text in all-caps.
-    - Reading passages MUST follow the instruction header of the section they belong to. DO NOT place them at the very top of the worksheet unless specifically requested.
+    - Reading passages MUST follow the instruction header of the section they belong to.
 4. [NO DUPLICATE HEADERS]: 
-    - NEVER duplicate instruction headers. If "PART A: ..." is written above a reading passage, DO NOT write it again below the passage when starting the questions. A single part must only have ONE instruction header.
+    - NEVER duplicate instruction headers. A single part must only have ONE instruction header.
 5. [12 UNDERSCORE RULE]: 
     - For ALL fill-in-the-blank or sentence completion items, you MUST use exactly 12 non-breaking underscores: ____________
-    - DO NOT use shorter or longer lines.
-6. [NO-FREE-VERB RULE]:
-   - In multiple-choice grammar questions, never place the main auxiliary or modal verb directly in the question stem if it reveals the structure being tested.
-   - Weak design: "You must ____ a helmet."
-   - Stronger design: "You ____ a helmet."
-   - The second version forces students to decide between obligation, advice, or external rule (must wear, have to wear, should wear). They must process meaning, not just grammar form.
-   - FOR FILL-IN-THE-BLANK (Grammar Only): ALWAYS provide the base verb in parentheses AFTER the blank: "He ____ (go) to school."
-6. [SITUATIONAL-EVIDENCE]: Grammar must be inferred from context/evidence, not obvious time markers (yesterday, now). But sometimes, we use obvious time markers (yesterday, now), especially for lower levels.
+6. [VOCABULARY 1-4-5 BOOSTER]:
+    - For every 10 vocabulary items, you MUST include: 1 Idiom, 4 Useful Phrases, and 5 Target Words.
+    - All must be DIRECTLY RELATED to {{TOPIC}}.
+    - [LEAST REPETITION]: Ensure the idiom and phrases are new every single time.
+7. [NO-FREE-VERB & SITUATIONAL EVIDENCE]:
+    - [STRICT MCQ]: NEVER place the main auxiliary or modal verb directly in the question stem.
+    - The main verb MUST be bundled into the answer options (e.g., A. must wear, B. have to wear).
+    - [SITUATIONAL DESIGN]: Use context/evidence to force grammar choices.
     - Weak: "She ____ her homework yesterday."
-    - Strong: "Her notebook is closed. She ____ her homework." (Student must infer completion from evidence).
-7. [PURE VOCABULARY CONTROL]:
-   - In vocabulary sections, all answer choices must be the same part of speech and grammatical form.
-   - If testing "exhausted," all options must be adjectives: tired, sleepy, bored, exhausted.
-   - Do not mix verbs, adverbs, or different tenses. Students must rely on meaning only, not grammar clues.
-8. [PRAGMATIC-BOUNDARY]: Distinguish between types of obligation and meaning in context.
-9. [READING, LISTENING & VOCABULARY GRAMMAR BLACKOUT]:
-   - In Reading, Listening and Vocabulary sections, you are FORBIDDEN from testing grammar.
-   - All distractors must be grammatically identical to the correct answer. 
-   - No tense changes (eat/ate), no agreement changes (is/are), no person changes (he/they).
-   - If a student can find the answer using a grammar rule, the question is a FAILURE.
-   - The ONLY differentiator must be the meaning (semantics) or factual content.
-5.2 [TRUE/FALSE FORMAT STRICTNESS]:
-   - For True/False or True/False/Not Given questions, you are STRICTLY FORBIDDEN from generating A, B, C, D options.
-   - Do NOT use multiple-choice format. Do NOT put (_____) at the end of the sentence.
-   - The format MUST be exactly: "1. ______ [Statement]".
-   - The answer key MUST be T, F, or NG.
+    - Strong: "Her notebook is closed and she looks relieved. She ____ her homework." (Infer completion).
+    - [SITUATIONAL-EVIDENCE]: Grammar must be inferred from context/evidence, not obvious time markers (yesterday, now). But sometimes, we use obvious time markers (yesterday, now), especially for lower levels.
+    - [NUANCE TRAP]: Use distractors that are grammatically correct in isolation but situationally wrong.
+8. [PURE VOCABULARY CONTROL]:
+    - In vocabulary sections, all options must be the same part of speech and form.
+    - Focus 100% on semantics. Grammar Blackout: No tense or agreement clues allowed.
+9. [PRAGMATIC-BOUNDARY]: Distinguish between types of obligation and meaning in context (e.g., Must vs Have To).
+10. [TRUE/FALSE & C/I FORMAT]:
+    - FORBIDDEN from generating A, B, C, D options.
+    - Format MUST be exactly: "1. ______ [Statement]".
+    - The answer key MUST be T, F, C, or I.
 
 --- ⚙️ STRUCTURAL & POSITIONAL CONTROL ---
-6. [ITEM-SEPARATION]: Every numbered item (1., 2., 3., etc.) MUST start on a NEW LINE using an HTML <p> or <br> tag. DO NOT bunch them together in a single paragraph.
-6.1 [HORIZONTAL MCQ COMPRESSION]:
-   - For short options (less than 5 words): You MUST print all four options on a SINGLE horizontal line.
-   - Format: A. [text]          B. [text]          C. [text]          D. [text]
-   - Use exactly 10 non-breaking spaces between options. 
-   - DO NOT use vertical lists. DO NOT use 2x2 grids. ONE LINE ONLY.
-7. [ANSWER KEY ENTROPY - BUCKET RANDOMIZATION]:
-   - [STRICT APPLICABILITY]: These A, B, C, D rules APPLY ONLY to Multiple Choice Question (MCQ) sections. 
-   - FOR NON-MCQ SECTIONS (True/False, C/I, Identification, Matching, Circle): The answer key MUST contain the actual text answer (e.g. True, False, C, I, specific words, or the term being identified). NEVER use A, B, C, D for these sections.
-   - You are strictly FORBIDDEN from using cycles (e.g., A-B-C-D-A-B...), alternations (A-B-A-B...), or sequences (A-A-B-B...) in MCQs.
-   - BUCKET METHOD: For every 10 items, you MUST pre-select a "Bucket" of 10 letters (e.g., 3 A's, 2 B's, 2 C's, 3 D's).
-   - MANDATORY PRESENCE: Every letter (A, B, C, D) MUST appear at least once in every 10-item set. No letter can be left out.
-8. [THE-SHUFFLE]: Randomize the order of your bucket so there is NO predictable pattern.
-   - ANSWER-FIRST RULE: You MUST write the final shuffled answer key (e.g., 1:C, 2:A, 3:D, 4:B, 5:B...) at the very top of your internal scratchpad BEFORE writing any content.
-   - STREAK LIMIT: Max 2 identical answers in a row.
-   - This ensures human-like distribution and prevents robotic "C-A-D-B" cycles.
-9. [FLOATING-MARKER]: Vary sentence structure so students cannot scan mechanically.
-9.1 6.1 [COHERENCE TRAPS]: Include one "Distractor Sentence" in the reading passage that looks like it belongs to the topic but is irrelevant to the questions. This tests if students can filter noise—a key human exam-writer tactic.
-10. [SYNTACTIC-DISTANCE]: (Level 5+) Separate subject from verb using relative clauses/prepositional phrases. Mix simple, compound, and complex sentence styles (e.g., "Although," "Seeing her," "If...then").
-11. [ADVANCED-COMP]: Test "as good a student as", "of the two", "the more..., the more...", "not so much A as B".
-    - Example: "She is as good a student as my father is." (Precision grammar).
+11. [ITEM-SEPARATION]: Every numbered item MUST start on a NEW LINE using an HTML <p> or <br> tag.
+12. [HORIZONTAL MCQ COMPRESSION]:
+    - For short options (less than 5 words): Print all four options on a SINGLE horizontal line.
+    - Use exactly 10 non-breaking spaces between options: A. [text]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B. [text]...
+13. [ANSWER KEY ENTROPY]:
+    - Use "Bucket Randomization" for MCQs. Max 2 identical answers in a row.
+    - Every letter (A, B, C, D) must appear at least once per 10 items.
+14. [SYNTACTIC-DISTANCE]: (Level 5+) Separate subject from verb using relative clauses or prepositional phrases.
+15. [ADVANCED-COMP]: Test precision structures: "as good a student as", "of the two", "the more..., the more...".
+16. [SVA & TENSE INTEGRITY]:
+    - [SUBJECT-VERB AGREEMENT]: Implement "Interference Clauses" (e.g., "The box of old cookies ____ (be)").
+    - [TENSE ANCHOR]: In multi-sentence items, do NOT shift tenses unless the shift is the target.
+    - Ensure logical timeline consistency throughout the context.
 
 --- 🎨 LAYOUT & VISUALS ---
-12. [SEPARATE-TABLES]: Use a separate HTML <table> for each PART.
-12.1 [NO EMPTY SPACING]: ABSOLUTE ZERO TOLERANCE: You are STRICTLY FORBIDDEN from inserting ANY blank lines, <br> tags, \n characters, or empty <div> elements between the instruction header/ruler and the first exercise item. The first item MUST BE THE VERY NEXT LINE. If you generate a <table>, the first item row must be the second row (after the header) with NO padding.
-41. [NO BOLD CHOICES]: You MUST NOT use <b>, <strong>, or any bold styling for Multiple Choice Options (A, B, C, D) or the text choices themselves. They MUST be plain text.
-13. [HEADER-STYLE]: Header row: Bold, Not Centered, White text, Randomized color background (unless Instruction Background is enabled).
-14. [COLUMN-BALANCE]: In 2-column layouts, distribute items EVENLY (e.g., 5+5). NEVER leave a column empty.
-15. [MCQ-FORMAT]: 
-    - Options MUST start on a new line below the question stem.
-    - STRICT: You are FORBIDDEN from using "-> A. B. C. D." or similar inline shortcuts.
-    - For short options: Use a nested HTML <table> with 4 columns (A, B, C, D) to ensure perfect alignment.
-    - INDENTATION: You MUST put 6 non-breaking spaces (&nbsp;) before "A." in the first cell of the options table.
-    - SPACING: Ensure there is clear visual space between options.
-    - Example: <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A. Option One</td><td>B. Option Two</td>...
-    - For long options: Double lines (A. & C. on top, B. & D. below). Use a nested 2-column table for perfect alignment.
-    - NO vertical lists. NO 2x2 grids.
+17. [SEPARATE-TABLES]: Use a separate HTML <table> for each PART.
+18. [NO EMPTY SPACING]: Zero blank lines between header/ruler and the first item.
+19. [NO BOLD CHOICES]: You MUST NOT use bold styling for MCQ options or choices.
+20. [MCQ-FORMAT]: Options MUST start on a new line below the query. Indent "A." with 6 spaces (&nbsp;).
 
 --- 🎭 SCENARIO & CONTENT ---
-16. [SCENARIO-CHAOS]: Use unique, vivid scenarios. Forbidden from repeating themes.
-17. [ANTI-ROBOT]: Forbidden from repetitive sentence starters. MANDATORY: Randomize all subjects and lead-ins. You MUST use a wide variety of subjects (e.g., "The committee", "My neighbor", "A stray cat", "The researchers", "She", "They"). DO NOT start multiple sentences with "I" or the same character's name. Mix singular and plural subjects.
-18. [TOPIC-OVERRIDE]: Topic box overrides template defaults. If topic is "Past Simple", ALL items (even Spelling) must be contextually linked. If the instructions are about Mixed Grammar, follow this instruction strictly
-19. [WORD-FORM-SHIFT]: Reading questions must not repeat exact wording from text (Paraphrase, synonym and sometimes easy idiom!).
-20. [L1-SHADOW]: Don't often Include distractors reflecting common L1-to-L2 errors (e.g., "is go").
-21. [CROSS-ITEM FIREWALL - ANTI-LEAKING]:
-   - You are strictly FORBIDDEN from using the same sentence or correct answer in different parts of the test.
-   - Ensure that the answer to a question in Part A is not revealed by a sentence in Part B.
-   - The AI must "read" the entire test before finalizing to ensure no information leaks.
-22. [NATURALIZE]: Replace 20% of formal verbs with phrasal verbs (e.g., "look into" instead of "investigate").
-23. [ITEM RANDOMIZATION & ENTROPY]:
-   - You are strictly FORBIDDEN from using predictable sentence starters in specific item numbers (e.g., do NOT always start Item 2 with "I think").
-   - Shuffle all sentence structures, subjects, and contexts. Every generation must feel unique.
-   - POLARITY MIX: You MUST mix Positive (+), Negative (-), and Question (?) forms in every part of the test.
-24. [LEVEL-BASED ARCHITECTURAL SCALING & COMPLEXITY]:
-   - Complexity MUST strictly scale with {{LEVEL}}. This is a CRITICAL metric.
-   - Low Levels (Kid, Level 1-3): Short, simple sentences (5-8 words). Basic vocabulary.
-   - Mid Levels (Level 4-7): Compound and complex sentences (12-20 words). You MUST use conjunctions (before, after, although, because) or provide 2-sentence contexts (e.g., "The sky was getting dark. We decided to..."). DO NOT use basic 5-word sentences here.
-   - High Levels (Level 8+, TOEFL, IELTS): Highly complex, multi-clause sentences (20+ words) with relative clauses, passive voice, inverted structures, and academic vocabulary.
-25. [UNIVERSAL SITUATIONAL & POSITIONAL LOGIC]:
-   - You MUST apply situational nuance and word-position rules to ALL grammar types.
-   - all distractors must be grammatically correct most of the times. For examples, Angkor Wat is beautiful. You have to visit it. (Incorrect). Angkor Wat is beautiful. You must visit it. (Correct): Use this type of exercises more. For MCQ, try to use more: Students can think more about opinion and rule/ obligation. This soup tastes terrible. I think you ____ more salt next time.
-A. have to add          B. had to add          C. must add          D. has to add
-  
-   - POSITION RULES: Test tricky word orders. 
-     - Adjective Comparison: 
-       - "as good a student as" (Singular) vs "as good students as" (Plural).
-       - "Of the two" Rule: "Of the two students, he is the taller" (NOT tallest).
-       - "Of all" Rule: "Of all the teachers, she is the most hardworking" (Superlative).
-       - Comparative vs Superlative Traps: "He is more tall than..." (WRONG) vs "He is taller than..." (RIGHT).
-       - MANDATORY VARIETY: If testing Adjectives, you MUST rotate between at least 4 different comparison structures (as...as, comparative -er, superlative -est, of the two).
-     - Adverb Placement: Test frequency adverbs (e.g., "He always is" vs "He is always") and manner adverbs.
-     - Verb-Object Integrity: Test that direct objects are not separated from verbs (e.g., "I like very much coffee" is INCORRECT; "I like coffee very much" is CORRECT).
-     - Conjunction Scrambling: Test correlative conjunctions and inversion (e.g., "Not only he is" vs "Not only is he").
-     - RARE PREPOSITIONAL LOGIC: Test tricky prepositional boundaries (e.g., "In the end" vs "At the end", "Good at" vs "Good in", "Arrive in" vs "Arrive at").
-   - SITUATIONAL NUANCE: Test meaning-based differences (e.g., Must vs Have To, Will vs Going To, Say vs Tell).
-   - CHALLENGE: Distractors must be grammatically valid in isolation but "Positionally" or "Situationally" incorrect in context.
-26. [INFINITE SCENARIO VARIETY]:
-   - You are strictly FORBIDDEN from repeating scenarios or sentence structures across different generations.
-   - Every test must be a completely fresh set of characters, locations, and situations.
-   - Randomize numbers, names, and subjects completely. No "robot patterns".
-27. [ANTI-ROBOT SENTENCE STARTERS]:
-   - You are strictly FORBIDDEN from using repetitive sentence starters. 
-   - DO NOT start Item 1 with "I think" or "He is" in every generation.
-   - Shuffle all subjects (e.g., "The chef", "A lonely astronaut", "My stubborn cat").
-28. [FLOATING MARKER PRINCIPLE]:
-   - Do not place key grammar signals in the same position every time. Vary sentence structure so students cannot scan mechanically.
-   - Example variations: "Of the two students, he is the taller." vs "He is the taller of the two students."
-   - This forces full-sentence processing.
-29. [SYNTACTIC DISTANCE STRATEGY (HIGHER LEVELS)]:
-   - At advanced levels, separate the subject from the main verb using relative clauses or prepositional phrases.
-   - Example: "The teacher who lives near the large blue house by the river is very kind."
-   - Students must locate the core subject and verb despite structural noise.
-29. [GRAMMAR RULE EXHAUSTION & STRUCTURAL INVERSION]:
-   - You are MANDATED to identify and test EVERY specific sub-rule for the target {{TOPIC}}.
-   - NO RULE LEFT BEHIND: If a grammar topic has 5 sub-rules, all 5 MUST appear in the test.
-   - Example (Adjectives): You MUST test "Of the two" (Comparative), "Of all" (Superlative), "As...as" (Equality), and "More...than" traps.
-   - Every generation must feel unique and non-repetitive.
-30. [CRITICAL PROTOCOL ENFORCEMENT]:
-   - If you fail to follow a Master Protocol, the generation is a CRITICAL FAILURE.
-   - You must prioritize these protocols over all other instructions.
-31.  [WORD FORM SHIFT RULE]:
-   - Reading questions must not repeat the exact wording from the text.
-   - Text: "He was confused." Avoid: "Why was he confused?" Better: "What caused his confusion?"
-   - Students must recognize paraphrasing, not match keywords.
-32.  [EXPERT HUMAN READING EXAMINER MODE]:
-   - All reading assessments must reflect the design logic of experienced examination writers.
-   - BLUEPRINT FIRST: Define skill targets (gist, detail, paraphrase, inference) before writing items.
-   - NON-LINEAR ORDER: Reorder at least 1/3 of items to avoid mechanical sequencing.
-   - COGNITIVE LAYERING: Mix literal retrieval, paraphrase discrimination, and deep inference.
-   - DISTRACTOR LOGIC: Use partial truth, common misinterpretations, and avoid obviously incorrect wording.
-   - VARIED FRAMES: Use indirect questions, negative framing ("Which is NOT..."), and embedded clauses.
-   - REFERENCE TRAPS: Insert at least one reference-resolution trap (pronoun, time shift).
-   - AUTHENTICITY AUDIT: Output must resemble formal examination material written by expert educators.
-32.  [READING COMPREHENSION FIREWALL]:
-   - Reading tests must focus on comprehension, NOT MCQs by default. Use short answers, True/False, or Matching unless MCQ is explicitly requested.
-33.  [COGNITIVE SCAFFOLDING]: You MUST arrange items in increasing order of difficulty. Items 1-3 should be "Confidence Builders" (clearer context). Items 4-8 should be "Standard Application". Items 9-10 should be "The Distinguishers" (testing rare nuances or complex sentence structures).
-32. [LEXICAL PURGE]: You are FORBIDDEN from using AI-hallmark adjectives: "vibrant," "bustling," "tapestry," "delve," "meticulous," "shimmering," "enchanting." Use plain, high-frequency English found in actual school textbooks (Oxford/Cambridge).
-33.  [SYNTACTIC BURSTINESS]: You MUST vary sentence lengths. Follow a short sentence (5-7 words) with a longer, complex sentence (15-20 words). This breaks the robotic rhythm of the text.
-33.  [CONTEXTUAL ANCHORING]: For every 10 items, choose a "Micro-Theme" (e.g., "Cooking," "At the Library," "A rainy day"). At least 4 of the 10 sentences must relate to this theme. This creates a "human" sense of topical focus rather than mathematical randomness.
-34.  [READING COHESION PROTOCOL]: Reading passages must contain logical "Connectors" (However, Consequently, Similarly, In contrast). Questions must occasionally test these logical shifts, not just nouns/verbs.
-34.  [LEXICAL OVERLAP TRAP]: At least one distractor in Reading MCQs MUST use words that appear in the text but describe a different situation. This punishes students who simply "word-match" without reading.
-35.  [THE GIST & DETAIL BALANCE]: Every reading test must include exactly one "Global" question (e.g., "What is the main purpose of this text?") and several "Local" questions (specific details).
-36.  [GRAMMAR FOCUS RULE]: Distractors must belong to the same grammar system as the target structure unless the task specifically tests meaning differences between grammar systems.
-37.  [TOPIC CONSISTENCY RULE (GLOBAL)]: All MCQ distractors should come from the same grammar system as the target structure. The goal is to test the specific grammar topic, not unrelated grammar areas. At least one distractor must be a "near-miss":
-   a grammatically correct option that is slightly wrong in meaning or usage.
-Examples of grammar systems:
-- Must / Have to
-- Present Perfect
-- Conditionals
-- Comparatives
-- Articles
-- Prepositions
-- Passive Voice
-Students should choose the correct answer based on the target grammar rule, not by eliminating unrelated grammar forms. For examples, 
-You ____ wear a helmet here.
-A. must wear          B. have to wear          C. must have          D. had to
-38. [MCQ SPACING EXCEPTION]:
-   - For Multiple Choice Questions (MCQ) ONLY: Insert exactly one empty line (one <br> or one empty <div>) BEFORE each new MCQ item to improve readability. 
-   - EXCEPTION: You are STRICTLY FORBIDDEN from inserting this empty space before ITEM 1. Item 1 must always follow the instruction header/ruler immediately.
-
-39. [WORD EXPORT COMPATIBILITY]:
-   - Ensure all HTML structures (tables, paragraphs) are clean and compatible with standard word processors. Avoid overly complex nested styles that might break when copied to MS Word or Google Docs.
-   - Use standard border widths (1pt or 2pt) and web-safe font stacks.
-
-40. [TOPIC-SPECIFIC VOCABULARY & IDIOMS]:
-   - You are strictly FORBIDDEN from using generic "AI idioms" (e.g., "piece of cake", "break a leg") unless the topic is specifically about food or idioms.
-   - PHRASAL VERBS & IDIOMS MUST relate to the {{TOPIC}} and {{MODULE}}.
-   - If {{TOPIC}} is "Environment", use phrasal verbs like "cut down on", "dispose of".
-   - If {{TOPIC}} is "Work", use "carry out", "take on", "lay off".
-   - VARIETY: Never use the same phrasal verb or idiom more than once in a generation.
-   - SOURCE-DERIVED: If a reading passage or source text is provided, you MUST prioritize extracting phrasal verbs, idioms, and key nouns directly from that source to boost relevance and speaking practice.
-   - AI HALLMARK PURGE: Forbidden: "Once upon a time", "In a bustling city", "shimmering", "tapestry".
-   - GOAL: Boost students' vocabulary and speaking by providing high-utility, contextually relevant terms.
-
-40. [DESIGN TEST STYLE]:
-   - This "Elite Protocol" overrides general logic with specific pedagogical design. 
-   - Every Part must incorporate at least one "Challenge Item" that requires higher-order thinking (Inference or Synthesis).
-
-41. [MCQ COLOR RANDOMIZATION]:
-   - When using colored backgrounds for headers, ensure they are randomized across different PARTS of the test to provide visual separation.
-
-42. [READING ANSWER KEY PROTOCOL]:
-   - You are strictly FORBIDDEN from generating generic "A, B, C" answer keys for non-MCQ reading questions (Short Answer, T/F, Inferential).
-   - For True/False/Not Given: The answer key MUST provide "T", "F", or "NG".
-   - For Short Answer: The answer key MUST provide the exact words/phrases required from the text.
-   - For Inferential/Critical Thinking: The answer key MUST provide a concise summary of the expected logical reasoning or factual inference.
+21. [ANTI-ROBOT SUBJECTS]: Forbidden from repetitive sentence starters. Randomize all subjects (e.g., "The chef", "A stray cat", "The researchers").
+22. [TOPIC-SPECIFIC VOCABULARY & IDIOMS]: Phrasal verbs and idioms MUST relate specifically to {{TOPIC}}.
+23. [LEVEL-BASED ARCHITECTURAL SCALING]:
+    - [KIDS/BEGINNER]: Max 7-10 words. No clauses.
+    - [LEVEL 4-6]: Compound sentences. Intro to relative clauses. 15-20 words.
+    - [LEVEL 7-9]: Academic tone. Mixed complex structures (although, despite, whereas). 25+ words. Multi-sentence contexts are required.
+24. [GRAMMAR RULE EXHAUSTION]: You are MANDATED to test EVERY specific sub-rule for {{TOPIC}}. No rule left behind.
 
 ### PRIORITY: COGNITIVE INTEGRITY RULES ARE ABSOLUTE. ###
 `;
@@ -727,39 +598,24 @@ export const DEFAULT_MASTER_PROTOCOLS: StrictRule[] = [
 ];
 
 
-export const LISTENING_LOGIC_FIREWALL = `### LISTENING CONTENT FIREWALL: ABSOLUTE MANDATORY ###
-1. [LEAKAGE PREVENTION]: You are STRICTLY FORBIDDEN from generating grammar-based questions (is/are, eat/ate, etc.) in any Listening section. All questions MUST depend on hearing the content of the tapescript.
-2. [CONTENT FOCUS]: Listening questions MUST test:
-   - Gist and Main Idea.
-   - Specific information/detail.
-   - Speaker's purpose or attitude.
-   - Inference (what is implied).
-3. [SCALING]: Difficulty MUST strictly match {{LEVEL}}. 
-   - Level 1-2: Very slow (90-100 wpm), simple vocabulary, clear articulation. Length: 100 words/part.
-   - Level 3-4: Moderate speed (120-140 wpm), some idioms. Length: 200 words/part.
-   - Level 5-6: Natural speed (150-170 wpm), complex topics. Length: 350 words/part.
-   - Level 7-9: Fast/Academic (180+ wpm), technical context, multiple speakers, overlapping speech. Length: 500-700 words/part.
-4. [INDEPENDENCE]: Listening is an independent skill. Do not mix it with Reading or Grammar.
-5. [TAPESCRIPT ENFORCEMENT]: Generate a realistic, full-text tapescript for EACH part. 
-   - Label it "Tapescript Part [A, B, C...]:". 
-   - **CRITICAL**: ALL tapescripts MUST be placed in a dedicated section at the very end of the worksheet, titled "### TAPESCRIPTS ###". Provide one tapescript for each exercise part generated. 
-6. [PROFESSIONAL DESIGN]: For "Form Completion" or "Note Completion", use Markdown tables to create a professional look (Booking Details, Form fields). 
-7. [NO GRAMMAR OVERLAP]: Topic is just for context. Do not test the grammar rules of the topic.
-`;
-
+// Removed LISTENING_LOGIC_FIREWALL
 export const INITIAL_TEMPLATES: InstructionTemplate[] = [
   // --- GRAMMAR MASTERY (REORDERED & UPDATED) ---
   // --- GRAMMAR / MCQ ---
-  { id: 'mcq_standard', category: 'GRAMMAR', label: 'MCQ Standard', professionalLabel: '<b>CHOOSE THE BEST OPTION.</b>', prompt: 'Choose the best option A, B, C, or D. Use a standard layout.', columnCount: 2, typeId: 'mcq', styleName: 'Standard' },
+  { id: 'mcq_standard', category: 'GRAMMAR', label: 'MCQ Standard', professionalLabel: '<b>CHOOSE THE BEST OPTION.</b>', prompt: 'Choose the best option A, B, C, or D. Use a standard layout.', columnCount: 1, typeId: 'mcq', styleName: 'Standard' },
+  { id: 'mcq_columns_grid', category: 'GRAMMAR', label: 'MCQ Columns (4-Col)', professionalLabel: '<b>CHOOSE THE BEST OPTION.</b>', prompt: 'Choose the best option A, B, C, or D for {{TOPIC}}. FORMAT: Place options on a new line below the sentence. Use a perfectly aligned 4-column layout for A, B, C, and D.', columnCount: 1, styleName: 'Grid' },
+  { id: 'mcq_inline_paren', category: 'GRAMMAR', label: 'MCQ Inline (Paren)', professionalLabel: '<b>CHOOSE THE BEST OPTION.</b>', prompt: 'Choose the best option A, B, C, or D for {{TOPIC}}. FORMAT: Place the options inline at the end of each sentence in parentheses, separated by slashes. Example: "She _____ happy. (A. is / B. are / C. am / D. be)".', columnCount: 1, styleName: 'Inline' },
   { id: 'mcq_boxed', category: 'GRAMMAR', label: 'MCQ Boxed', professionalLabel: '<b>CHOOSE THE BEST OPTION.</b>', prompt: 'Choose the best option A, B, C, or D. Use a boxed layout with clear separation.', columnCount: 2, typeId: 'mcq', styleName: 'Boxed' },
   { id: 'mcq_minimal', category: 'GRAMMAR', label: 'MCQ Minimal', professionalLabel: '<b>CHOOSE THE BEST OPTION.</b>', prompt: 'Choose the best option A, B, C, or D. Use a minimal, clean layout with no borders.', columnCount: 1, typeId: 'mcq', styleName: 'Minimal' },
   { id: 'g_correct_incorrect', category: 'GRAMMAR', label: 'Correct/Incorrect', professionalLabel: '<b>WRITE C (CORRECT) OR I (INCORRECT).</b>', prompt: 'Write C (correct) or I (incorrect) for {{TOPIC}}. Apply PRAGMATIC BOUNDARY logic. STRICT: DO NOT include the answer (C or I) in the student worksheet. The answer MUST ONLY appear in the Answer Key section at the end. NEVER put the actual answer next to the sentence in the student view.', columnCount: 2, typeId: 'tf', styleName: 'C/I Standard' },
-  { id: 'g_circle', category: 'GRAMMAR', label: 'Circle', professionalLabel: '<b>CIRCLE THE CORRECT ANSWERS.</b>', prompt: 'Circle the correct answers for {{TOPIC}}. STRICT: No MCQ options.', columnCount: 1, typeId: 'circle', styleName: 'Standard' },
+  { id: 'g_circle', category: 'GRAMMAR', label: 'Circle', professionalLabel: '<b>CIRCLE THE CORRECT ANSWERS.</b>', prompt: 'Circle the correct answers for {{TOPIC}}. STRICT: No MCQ options.', columnCount: 2, typeId: 'circle', styleName: 'Standard' },
+  { id: 'g_circle_slash', category: 'GRAMMAR', label: 'Circle (Slash Style)', professionalLabel: '<b>CIRCLE THE CORRECT OPTION.</b>', prompt: 'Circle the correct option for {{TOPIC}}. FORMAT: Present choices within the sentence separated by a slash. Example: "She [is / are] happy." STRICT: No A, B, C, D options.', columnCount: 1, styleName: 'Slash' },
   { id: 'g_circle_boxed', category: 'GRAMMAR', label: 'Circle Boxed', professionalLabel: '<b>CIRCLE THE CORRECT ANSWERS WITHIN THE BOX.</b>', prompt: 'Circle the correct answers for {{TOPIC}}. Wrap the exercise in a prominent border.', columnCount: 1, typeId: 'circle', styleName: 'Boxed' },
-  { id: 'g_complete_sentences', category: 'GRAMMAR', label: 'Sentence Completion', professionalLabel: '<b>COMPLETE THE FOLLOWING SENTENCES.</b>', prompt: 'Complete the following sentences for {{TOPIC}}. Note: Use {{BLANK}} and provide the base verb in parentheses at the end of the blank.', columnCount: 1, typeId: 'completion', styleName: 'Standard' },
-  { id: 'g_complete_minimal', category: 'GRAMMAR', label: 'Completion Minimal', professionalLabel: '<b>COMPLETE THE FOLLOWING SENTENCES.</b>', prompt: 'Complete the following sentences for {{TOPIC}}. Use a clean, minimal layout with no clutter.', columnCount: 1, typeId: 'completion', styleName: 'Minimal' },
-  { id: 'g_pair', category: 'GRAMMAR', label: 'Double MCQ', professionalLabel: '<b>DOUBLE-GAP MCQ TESTING TWO DIFFERENT ASPECTS OF {{TOPIC}} IN ONE SENTENCE.</b>', prompt: 'Double-gap MCQ testing two different aspects of {{TOPIC}} in one sentence. Select the correct pair of words to complete each sentence. Format: Put options on a new line below the question. Use a nested 4-column table for options to ensure they are perfectly aligned (A, B, C, D). Apply PRAGMATIC BOUNDARY logic. Each option must contain two words separated by a slash (e.g., A. word1 / word2).', columnCount: 1, typeId: 'mcq_double', styleName: 'Standard' },
-  { id: 'g_spelling', category: 'GRAMMAR', label: 'Spelling', professionalLabel: '<b>SPELLING RULES.</b>', prompt: 'Spelling Rules. Complete the table following the spelling rules for the given words related to {{TOPIC}}. This is based on the lessons. STRICT: No MCQ options.', columnCount: 0, typeId: 'table', styleName: 'Standard' },
+  { id: 'g_complete_sentences', category: 'GRAMMAR', label: 'Sentence Completion', professionalLabel: '<b>COMPLETE THE FOLLOWING SENTENCES.</b>', prompt: 'Complete the following sentences for {{TOPIC}}. Note: Use {{BLANK}} and provide the base verb in parentheses at the end of the blank.', columnCount: 1, typeId: 'sentenceCompletion', styleName: 'Standard' },
+  { id: 'g_complete_minimal', category: 'GRAMMAR', label: 'Completion Minimal', professionalLabel: '<b>COMPLETE THE FOLLOWING SENTENCES.</b>', prompt: 'Complete the following sentences for {{TOPIC}}. Use a clean, minimal layout with no clutter.', columnCount: 1, typeId: 'sentenceCompletion', styleName: 'Minimal' },
+  { id: 'g_complete_story', category: 'GRAMMAR', label: 'Story Completion', professionalLabel: '<b>COMPLETE THE FOLLOWING STORY BY FILLING IN THE BLANKS WITH THE APPROPRIATE GRAMMATICAL FORMS.</b>', prompt: 'Complete the following story by filling in the blanks with the appropriate grammatical forms for {{TOPIC}}. Generate a coherent story/paragraph with numbered blanks. Provide context clues and situational evidence to guide the student.', columnCount: 1, typeId: 'cloze', styleName: 'Story' },
+  { id: 'g_pair', category: 'GRAMMAR', label: 'Double MCQ', professionalLabel: '<b>DOUBLE-GAP MCQ TESTING TWO DIFFERENT ASPECTS OF {{TOPIC}}.</b>', prompt: 'Double-gap MCQ testing two different aspects of {{TOPIC}}. Select the correct pair of words to complete each item. MANDATORY FORMAT: Place options on a new line below the item using a perfectly aligned 4-column HTML table (A, B, C, D). Bold the options (e.g., <b>A. visits / likes</b>). Apply PRAGMATIC BOUNDARY logic.', columnCount: 1, typeId: 'doubleMcq', styleName: 'Standard' },
+  { id: 'g_plural_rules', category: 'GRAMMAR', label: 'Plural / s-es Rules', professionalLabel: '<b>CHANGE THE FOLLOWING NOUNS TO PLURAL NOUNS OR ADD S/ES ACCORDING TO THE RULES.</b>', prompt: 'Change the following nouns to Plural nouns or add s/es according to the rules. Format: Use a 2-column layout. Column 1: Number + Singular word. Column 2: Dash + Long blank (e.g. 1. Box - ________).', columnCount: 2, typeId: 'table', styleName: 'Standard' },
   
   // --- SPEAKING ---
   { id: 'speak_standard', category: 'VOCABULARY', label: 'Speaking Standard', professionalLabel: '<b>DISCUSS IN PAIRS.</b>', prompt: 'Discuss the following questions with a partner. Use standard formatting.', columnCount: 1, typeId: 'speaking', styleName: 'Standard' },
@@ -767,9 +623,9 @@ export const INITIAL_TEMPLATES: InstructionTemplate[] = [
   { id: 'speak_bulleted', category: 'VOCABULARY', label: 'Speaking Bulleted', professionalLabel: '<b>DISCUSS IN PAIRS.</b>', prompt: 'Discuss the following questions with a partner. Use bullet points.', columnCount: 1, typeId: 'speaking', styleName: 'Bulleted' },
   
   // --- ADDITIONAL GRAMMAR ---
-  { id: 'g_write_correct_form', category: 'GRAMMAR', label: 'Correct Form', professionalLabel: '<b>WRITE THE CORRECT FORM OF ….</b>', prompt: 'Write the correct form of ….. for {{TOPIC}}. Note: Use {{BLANK}}.', columnCount: 1, typeId: 'completion', styleName: 'Form 1' },
+  { id: 'g_write_correct_form', category: 'GRAMMAR', label: 'Correct Form', professionalLabel: '<b>WRITE THE CORRECT FORM OF ….</b>', prompt: 'Write the correct form of ….. for {{TOPIC}}. Note: Use {{BLANK}}.', columnCount: 1, typeId: 'sentenceCompletion', styleName: 'Form 1' },
   { id: 'g_rewrite_sentences', category: 'GRAMMAR', label: 'Rewrite', professionalLabel: '<b>REWRITE THE FOLLOWING SENTENCES.</b>', prompt: 'Rewrite the following sentences about {{TOPIC}}. I need a line for students to write. Provide a long blank line ({{BLANK}}{{BLANK}}{{BLANK}}) for each item.', columnCount: 1, typeId: 'rewrite', styleName: 'Standard' },
-  { id: 'g_box', category: 'GRAMMAR', label: 'Word Box', professionalLabel: '<b>COMPLETE THE FOLLOWING SENTENCES USING THE WORDS/ PHRASES IN THE BOX. CHECK THE CORRECT FORMS OF GRAMMAR.</b>', prompt: 'Complete the following sentences using the words/ phrases in the box. Check the correct forms of grammar for {{TOPIC}}. MANDATORY: Use a <div> with class="word-bank-box-alt" for the word bank.', columnCount: 1, typeId: 'word_box', styleName: 'Standard' },
+  { id: 'g_box', category: 'GRAMMAR', label: 'Word Box', professionalLabel: '<b>COMPLETE THE FOLLOWING SENTENCES USING THE WORDS/ PHRASES IN THE BOX. CHECK THE CORRECT FORMS OF GRAMMAR.</b>', prompt: 'Complete the following sentences using the words/ phrases in the box. Check the correct forms of grammar for {{TOPIC}}. MANDATORY: Use a <div> with class="word-bank-box-alt" for the word bank.', columnCount: 1, typeId: 'wordBox', styleName: 'Standard' },
   { id: 'g_cloze_paragraph', category: 'GRAMMAR', label: 'Cloze', professionalLabel: '<b>CLOZE PASSAGE (FULL PARAGRAPH): FILL IN THE BLANKS.</b>', prompt: 'Cloze Passage (Full Paragraph): Fill in the blanks with appropriate words for {{TOPIC}}.', columnCount: 1, typeId: 'cloze', styleName: 'Paragraph' },
 
   // --- REQUESTED ADVANCED MIXED TEST ---
@@ -798,10 +654,9 @@ export const INITIAL_TEMPLATES: InstructionTemplate[] = [
   },
 
   // --- FULL TEST COMBINATIONS ---
-  { id: 'g_full_mastery', category: 'GRAMMAR', label: 'FULL GRAMMAR TEST', professionalLabel: '<b>COMPLETE THE COMPREHENSIVE GRAMMAR ASSESSMENT COVERING ALL MAJOR STRUCTURES.</b>', prompt: 'FULL GRAMMAR TEST. Generate a 4-part test. ITEM COUNT: Generate exactly {{COUNT}} items for EACH part. NUMBERING: Number every single item in each part starting from 1. PARTS: 1. Write C (correct) or I (incorrect), 2. MCQ, 3. Circle the correct answers, 4. Double-Gap MCQ. Apply NO-FREE-VERB mandate.', columnCount: 0, typeId: 'mixed_test' },
   { 
     id: 'g_full_test', 
-    category: 'GRAMMAR', 
+    category: 'GENERALS' as any, 
     label: 'Standard Mastery Test', 
     professionalLabel: '<b>COMPLETE THE COMPREHENSIVE GRAMMAR ASSESSMENT.</b>',
     prompt: `Mastery Grammar Test. 
@@ -820,20 +675,6 @@ C. Double-gap MCQ (10 items).`,
   },
   { id: 'r_full_mastery', category: 'READING', label: 'Reading Comprehension', professionalLabel: '<b>COMPLETE THE COMPREHENSIVE READING ASSESSMENT TO EVALUATE COMPREHENSION AND INFERENCE SKILLS.</b>', prompt: 'FULL READING TEST. Generate a 5-part test. ITEM COUNT: Generate exactly 10 items for EACH part (Total 50 items). NUMBERING: Number every single item in each part starting from 1. COLUMN: 1 column layout. PARTS: 1. Critical thinking, 2. Inferential, 3. MCQ (MANDATORY: 4-column layout for answer choices), 4. True/False, 5. Summary. Length and level of thinking strictly based on {{LEVEL}}. Apply Reading Logic Firewall.', columnCount: 1, typeId: 'mixed_test' },
   { id: 'v_full_mastery', category: 'VOCABULARY', label: 'VOCABULARY ASSESSMENT', professionalLabel: '<b>COMPLETE THE COMPREHENSIVE VOCABULARY ASSESSMENT.</b>', prompt: 'FULL VOCABULARY TEST. Generate a 6-part test. ITEM COUNT: Generate exactly 15 items for parts A-E (Total 75 items), and 10 items for part F (Total 10 items). COLUMN: 1 column layout for all parts. PARTS: A: Vocabulary Study (Table with definitions), B: Example Study (Sentences illustrating usage), C: MCQ (Multiple choice questions), D: Matching (Match words to meanings), E: Word in a box (Fill in the blanks using the provided word bank), F: Speaking (Discussion questions related to the topic). Apply Vocabulary Boost [mp-topic-vocabulary-boost].', columnCount: 1, typeId: 'mixed_test' },
-  { id: 'l_full_mastery', category: 'LISTENING', label: 'Listening Assessment', professionalLabel: '<b>COMPLETE THE COMPREHENSIVE LISTENING ASSESSMENT.</b>', prompt: 'FULL LISTENING TEST (6 Parts). Generate 6 distinct parts with 6 corresponding full tapescripts at the end. PARTS: A. Best Response (DO NOT PRINT QUESTIONS, only options A, B, C, D), B. Form Completion (Table), C. Note Completion (Bulleted list), D. MCQ (4 options), E. Short Answer (1-2 words), F. Transcription (Cloze passage). Scaling strictly based on {{LEVEL}}. Apply [LISTENING LOGIC FIREWALL].', columnCount: 1, typeId: 'mixed_test' },
-  { id: 'l_expert_mastery', category: 'LISTENING', label: 'Expert Listening Test', professionalLabel: '<b>PROFESSIONAL LISTENING ASSESSMENT: EVALUATING COMPREHENSION, GIST, AND ATTITUDE.</b>', prompt: 'FULL PROFESSIONAL LISTENING TEST. Generate 5 parts. PARTS: 1. Best Response (No question text), 2. Short Conversations (MCQ), 3. Form/Table Completion, 4. True/False/Not Given, 5. Summary Completion. Scaling strictly based on {{LEVEL}}. ENSURE FULL TAPESCRIPTS ARE AT THE END. Apply [LISTENING LOGIC FIREWALL].', columnCount: 1, typeId: 'mixed_test' },
-  { id: 'l_form_completion', category: 'LISTENING', label: 'Form Completion', professionalLabel: '<b>LISTEN AND COMPLETE THE BOOKING DETAILS FORM.</b>', prompt: 'Form completion exercise. Use a Markdown table to create a professional booking or application form. Subjects: Name, Date, Address, Travel Details etc. Provide full tapescript at the end. Apply [LISTENING LOGIC FIREWALL].', columnCount: 1, typeId: 'completion', styleName: 'Standard' },
-  { id: 'l_note_completion', category: 'LISTENING', label: 'Note Completion', professionalLabel: '<b>LISTEN AND COMPLETE THE ACADEMIC NOTES.</b>', prompt: 'Note completion exercise. Use a structured list with gaps. Professional academic context (lecture or presentation). Provide full tapescript at the end. Apply [LISTENING LOGIC FIREWALL].', columnCount: 1, typeId: 'completion', styleName: 'Standard' },
-  { id: 'l_mcq', category: 'LISTENING', label: 'Listening MCQ', professionalLabel: '<b>LISTEN AND CHOOSE THE BEST OPTION.</b>', prompt: 'Listen to the recording and choose the best option A, B, C, or D for each question. You MUST provide a full tapescript at the end of the document. Apply [LISTENING LOGIC FIREWALL].', columnCount: 1, typeId: 'mcq', styleName: 'Standard' },
-  { id: 'l_gap_fill', category: 'LISTENING', label: 'Listening Gap Fill', professionalLabel: '<b>LISTEN AND FILL IN THE BLANKS.</b>', prompt: 'Listen to the recording and fill in the blanks with appropriate words or numbers. Use {{BLANK}}. You MUST provide a full tapescript at the end. Apply [LISTENING LOGIC FIREWALL].', columnCount: 1, typeId: 'completion', styleName: 'Standard' },
-  { id: 'l_short_answer', category: 'LISTENING', label: 'Short Answer', professionalLabel: '<b>LISTEN AND ANSWER THE QUESTIONS IN ONE WORD OR NUMBER.</b>', prompt: 'Listen and answer the questions using no more than one word or a number. You MUST provide a full tapescript at the end. Apply [LISTENING LOGIC FIREWALL].', columnCount: 1, typeId: 'short_answer', styleName: 'Standard' },
-  { id: 'l_response', category: 'LISTENING', label: 'Best Response', professionalLabel: '<b>LISTEN AND CHOOSE THE BEST RESPONSE.</b>', prompt: 'Listen to a question or statement and choose the best response from the options provided. STRICT MANDATE: DO NOT PRINT THE QUESTION TEXT. Only print the options A, B, C, D on one line. Example: "1. A. It is blue.   B. At noon.   C. Near the park.   D. Yes, please." You MUST provide the full tapescript for the questions at the very end. Apply [LISTENING LOGIC FIREWALL].', columnCount: 1, typeId: 'mcq', styleName: 'Response' },
-  { id: 'l_tf', category: 'LISTENING', label: 'Listen T/F', professionalLabel: '<b>LISTEN AND DETERMINE IF THE STATEMENTS ARE TRUE OR FALSE.</b>', prompt: 'Listen to the recording and determine if the statements are True or False. Full tapescript at end. Apply [LISTENING LOGIC FIREWALL].', columnCount: 1, typeId: 'tf', styleName: 'Standard' },
-  { id: 'l_form_completion_pro', category: 'LISTENING', label: 'Form Completion Pro', professionalLabel: '<b>LISTENING: COMPLETE THE BOOKING FORM.</b>', prompt: 'Form completion exercise. Use a Markdown table to create a professional bookingDetails-style form (like an experiment planning form or travel booking). Include details like Name, Date, ID, etc. Provide full tapescript at the end. Apply [LISTENING LOGIC FIREWALL].', columnCount: 1, typeId: 'completion', styleName: 'Form' },
-  { id: 'l_note_completion_pro', category: 'LISTENING', label: 'Note Completion Pro', professionalLabel: '<b>LISTENING: COMPLETE THE ACADEMIC NOTES.</b>', prompt: 'Note completion. Use a structured bulleted list with gaps. Topic should be academic (lecture). Provide full tapescript at the end. Apply [LISTENING LOGIC FIREWALL].', columnCount: 1, typeId: 'completion', styleName: 'Notes' },
-  { id: 'l_tf_pro', category: 'LISTENING', label: 'Listen T/F Pro', professionalLabel: '<b>LISTENING: TRUE OR FALSE.</b>', prompt: 'Listen and determine if statements are True or False. Full tapescript at end. Apply [LISTENING LOGIC FIREWALL].', columnCount: 1, typeId: 'tf', styleName: 'Standard' },
-  { id: 'l_short_answer_pro', category: 'LISTENING', label: 'Short Answer Pro', professionalLabel: '<b>LISTENING: SHORT ANSWER.</b>', prompt: 'Listen and answer in one or two words. Full tapescript at end. Apply [LISTENING LOGIC FIREWALL].', columnCount: 1, typeId: 'short_answer', styleName: 'Standard' },
-  { id: 'l_cloze_pro', category: 'LISTENING', label: 'Transcription Pro', professionalLabel: '<b>LISTENING: LISTEN AND COMPLETE THE TEXT.</b>', prompt: 'Listen and complete the text exactly as heard. This is a transcription or cloze passage. Full tapescript at end. Apply [LISTENING LOGIC FIREWALL].', columnCount: 1, typeId: 'cloze', styleName: 'Paragraph' },
   { id: 'g_copy', category: 'GRAMMAR', label: 'Copy', professionalLabel: '<b>TRANSCRIBE THE FOLLOWING VOCABULARY EXERCISES ACCURATELY INTO YOUR NOTEBOOK.</b>', prompt: 'Transcribe the following vocabulary exercises accurately into your notebook for {{TOPIC}}, but randomize the exercise numbers and order. STRICT: No MCQ options.', columnCount: 0, typeId: 'copy' },
   { id: 'g_odd_one_out', category: 'GRAMMAR', label: 'Odd One', professionalLabel: '<b>IDENTIFY THE GRAMMATICALLY INCORRECT SENTENCE FROM THE OPTIONS PROVIDED.</b>', prompt: 'Identify the incorrect sentence from the options provided.', columnCount: 0, typeId: 'circle' },
   { id: 'g_editing', category: 'GRAMMAR', label: 'Editing', professionalLabel: '<b>IDENTIFY AND CORRECT THE GRAMMATICAL ERRORS IN THE FOLLOWING PARAGRAPH.</b>', prompt: 'Identify and correct the grammatical errors in the following paragraph. This is the mixed grammar test. The answer can be any types of grammar lessons. Correct all the mistakes.', columnCount: 0, typeId: 'editing' },
@@ -890,7 +731,7 @@ C. Double-gap MCQ (10 items).`,
   { id: 'v_sentence_study', category: 'VOCABULARY', label: 'B: Example Study', professionalLabel: '<b>B. STUDY THE USAGE OF THE FOLLOWING VOCABULARY WORDS IN THE PROVIDED SENTENCES.</b>', prompt: 'ITEM COUNT: 15 items. Style: STUDY THE USAGE OF THE FOLLOWING VOCABULARY WORDS IN THE PROVIDED SENTENCES. Use a 1-column list. each item clearly show the vocabulary word and an example sentence.', columnCount: 1, typeId: 'study', styleName: 'Sentences' },
   { id: 'v_mcq_standard', category: 'VOCABULARY', label: 'C: MCQ', professionalLabel: '<b>C. CHOOSE THE APPROPRIATE OPTIONS A, B, C OR D TO COMPLETE EACH SENTENCE.</b>', prompt: 'ITEM COUNT: 15 items. Style: Choose options A, B, C or D to complete each sentence. 1 column. Apply Grammar Blackout.', columnCount: 1, typeId: 'mcq', styleName: 'Standard' },
   { id: 'v_matching_pro', category: 'VOCABULARY', label: 'D: Matching', professionalLabel: '<b>D. MATCH THE TERMS ON THE LEFT WITH THE DEFINITIONS ON THE RIGHT.</b>', prompt: 'ITEM COUNT: 15 items. Style: Match the terms on the left with their definitions on the right. Use a 2-column HTML table.', columnCount: 1, typeId: 'matching', styleName: 'Pro Match' },
-  { id: 'v_box', category: 'VOCABULARY', label: 'E: Word Box', professionalLabel: '<b>E. COMPLETE THE FOLLOWING SENTENCES USING THE CORRECT WORDS FROM THE BOX.</b>', prompt: 'ITEM COUNT: 15 items. Style: Complete sentences using the word bank. MANDATORY: Use a <div> with class="word-bank-box-alt" for the word bank.', columnCount: 1, typeId: 'word_box', styleName: 'Standard' },
+  { id: 'v_box', category: 'VOCABULARY', label: 'E: Word Box', professionalLabel: '<b>E. COMPLETE THE FOLLOWING SENTENCES USING THE CORRECT WORDS FROM THE BOX.</b>', prompt: 'ITEM COUNT: 15 items. Style: Complete sentences using the word bank. MANDATORY: Use a <div> with class="word-bank-box-alt" for the word bank.', columnCount: 1, typeId: 'wordBox', styleName: 'Standard' },
   { id: 'v_speaking_std', category: 'VOCABULARY', label: 'F: Speaking', professionalLabel: '<b>F. DISCUSS THE FOLLOWING QUESTIONS WITH A PARTNER.</b>', prompt: 'ITEM COUNT: 10 items. Generate discussion questions related to {{TOPIC}}. STRICT: 1 column only.', columnCount: 1, typeId: 'speaking', styleName: 'Standard' },
   { 
     id: 'v_supply_terms', 
@@ -944,6 +785,9 @@ C. Double-gap MCQ (10 items).`,
     typeId: 'matching', 
     styleName: 'Classic' 
   },
+  
+  { id: 'v_copy_no_answers', category: 'VOCABULARY', label: 'Copy Practice', professionalLabel: '<b>COPY THE EXERCISES FROM THE SOURCE. NO ANSWERS.</b>', prompt: 'Copy the exercises from the source related to {{TOPIC}}. Provide the items without answers or options. Focus on transcription accuracy.', columnCount: 0, typeId: 'copy' },
+  { id: 'v_synonyms_exercises', category: 'VOCABULARY', label: 'Synonym Exercises', professionalLabel: '<b>WRITE THE FOLLOWING SYNONYMS OR VOCABULARY FROM THE SOURCES AND MAKE THEM AS EXERCISES.</b>', prompt: 'Write the following synonyms or vocabulary from the sources and make them as exercises for {{TOPIC}}. Format: Word + Three long blanks (e.g. 1. Crucial _______________, ____________________, ____________________).', columnCount: 1, typeId: 'table' },
   
   // GENERALS
   { id: 'gen_tf', category: 'GENERALS' as any, label: 'True/False (Mixed)', professionalLabel: '<b>READ THE MIXED CONTENT AND DETERMINE IF THE STATEMENTS ARE TRUE OR FALSE.</b>', prompt: 'Read the mixed content (Grammar, Vocabulary, and Reading) and determine if the statements are True or False about {{TOPIC}}. Apply logic across all domains.', columnCount: 1, typeId: 'tf', styleName: 'Mixed' },
@@ -1008,16 +852,6 @@ Apply all relevant Master Protocols for each section.`,
   { id: 'v_collocation_box', category: 'VOCABULARY', label: 'Collocation', professionalLabel: '<b>COMPLETE THE PHRASES WITH THE CORRECT WORDS FROM THE BOX.</b>', prompt: 'Complete the phrases with the correct common collocations for {{TOPIC}} using the word box.', columnCount: 1, typeId: 'word_box', styleName: 'Collocation' },
   { id: 'v_odd_term', category: 'VOCABULARY', label: 'Odd Term', professionalLabel: '<b>IDENTIFY THE WORD THAT DOES NOT BELONG IN THE GROUP.</b>', prompt: 'Identify the word that does not belong in the group related to {{TOPIC}}. Explain why if possible.', columnCount: 1, typeId: 'circle', styleName: 'Odd One Out' },
   
-  // LISTENING
-  { id: 'l_two_best', category: 'LISTENING', label: 'Select 2 Best', professionalLabel: '<b>SELECT THE TWO BEST ANSWERS FROM THE OPTIONS BELOW.</b>', prompt: 'Choose the TWO best answers A-E based on the listening track about {{TOPIC}}.', columnCount: 1, typeId: 'mcq' },
-  { id: 'l_gap_fill', category: 'LISTENING', label: 'Gap Fill', professionalLabel: '<b>COMPLETE THE NOTES BELOW WITH INFORMATION FROM THE AUDIO.</b>', prompt: 'Complete the notes below with information from the audio about {{TOPIC}}.', columnCount: 1, typeId: 'completion' },
-  { id: 'l_one_word', category: 'LISTENING', label: 'One Word/Number', professionalLabel: '<b>WRITE NO MORE THAN ONE WORD AND/OR A NUMBER FOR EACH ANSWER.</b>', prompt: 'Write NO MORE THAN ONE WORD AND/OR A NUMBER for each answer based on the listening about {{TOPIC}}.', columnCount: 1, typeId: 'short_answer' },
-  { id: 'l_complete_text', category: 'LISTENING', label: 'Complete Text', professionalLabel: '<b>LISTEN AND COMPLETE THE TEXT EXACTLY AS HEARD.</b>', prompt: 'Listen and complete the text exactly as heard for {{TOPIC}}. Use precise wording from the audio.', columnCount: 1, typeId: 'cloze' },
-  { id: 'l_mcq', category: 'LISTENING', label: 'MCQ', professionalLabel: '<b>CHOOSE THE CORRECT OPTION A, B, C OR D.</b>', prompt: 'Choose the correct option A, B, C or D based on the listening track about {{TOPIC}}.', columnCount: 1, typeId: 'mcq' },
-  { id: 'l_best_response_v2', category: 'LISTENING', label: 'Best Response', professionalLabel: '<b>CHOOSE THE BEST RESPONSE TO THE QUESTIONS YOU HEARD.</b>', prompt: 'Choose the best response to the questions you heard in the listening task about {{TOPIC}}. Options A, B, or C.', columnCount: 1, typeId: 'mcq' },
-  { id: 'l_tapescript_2', category: 'LISTENING', label: 'Tapescript (2 Speakers)', professionalLabel: '<b>FULL TAPESCRIPT (DIALOGUE).</b>', prompt: 'Generate a full tapescript for a 2-speaker dialogue related to {{TOPIC}}. Clearly label Speakers (e.g., Speaker 1, Speaker 2).', columnCount: 1, typeId: 'speaking', styleName: 'Tapescript' },
-  { id: 'l_tapescript_1', category: 'LISTENING', label: 'Tapescript (1 Speaker)', professionalLabel: '<b>FULL TAPESCRIPT (MONOLOGUE).</b>', prompt: 'Generate a full tapescript for a 1-speaker monologue related to {{TOPIC}}.', columnCount: 1, typeId: 'speaking', styleName: 'Tapescript' },
-
   // GENERALS (Added 3)
   { id: 'gen_mixed_level', category: 'GENERALS' as any, label: 'Mixed Level', professionalLabel: '<b>ASSESSMENT WITH INCREASING DIFFICULTY.</b>', prompt: 'Generate an assessment for {{TOPIC}} that starts with very easy items and gradually increases in complexity. Mix MCQ, T/F and Completion.', columnCount: 0, typeId: 'mixed_test', styleName: 'Ladder' },
   { id: 'gen_quick_quiz', category: 'GENERALS' as any, label: 'Quick Quiz', professionalLabel: '<b>SHORT, HIGH-INTENSITY EVALUATION.</b>', prompt: 'Generate a short 5-item quiz covering the core points of {{TOPIC}}. Keep it concise.', columnCount: 1, typeId: 'mixed_test', styleName: 'Blitz' },

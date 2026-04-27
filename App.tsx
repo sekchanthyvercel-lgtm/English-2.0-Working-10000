@@ -21,7 +21,6 @@ import {
   LANGUAGES,
   ACADEMIC_LEVELS,
   GLOBAL_STRICT_COMMAND,
-  LISTENING_LOGIC_FIREWALL,
   BORDER_FRAME_INSTRUCTION,
   PART_BACKGROUND_INSTRUCTION,
   INSTRUCTION_HEADER_BACKGROUND_INSTRUCTION,
@@ -933,7 +932,7 @@ function App() {
   const [isAssistantVisible, setIsAssistantVisible] = useState(false);
   const [activeModule, setActiveModule] = useState<string>('Grammar');
   const [activeLanguage, setActiveLanguage] = useState<string>('English');
-  const [activeLevel, setActiveLevel] = useState<AcademicLevel>('Level 1');
+  const [activeLevel, setActiveLevel] = useState<AcademicLevel>('Level 7');
   const [answerStrategy, setAnswerStrategy] = useState<AnswerStrategy>('GENERAL_MIXED');
   const [topic, setTopic] = useState<string>('');
   const [isGenerating, setIsGenerating] = useState(false);
@@ -968,13 +967,12 @@ function App() {
   const [paperDesign, setPaperDesign] = useState<number>(8); // Style 9: Modern Red
   const [instructionHeaderStyle, setInstructionHeaderStyle] = useState<number>(6); // Style 6: Mix Styles (Default)
   const [defaultColumnCount, setDefaultColumnCount] = useState<number>(2); // 2 columns
-  const [architectTab, setArchitectTab] = useState<'Grammar' | 'Vocabulary' | 'Reading' | 'Listening' | 'Generals' | 'Custom'>('Grammar');
+  const [architectTab, setArchitectTab] = useState<'Grammar' | 'Vocabulary' | 'Reading' | 'Generals' | 'Custom'>('Grammar');
   const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({});
   const [selectedExerciseTypeId, setSelectedExerciseTypeId] = useState<string | null>(null);
   const [selectedExerciseCategoryId, setSelectedExerciseCategoryId] = useState<string>('GRAMMAR');
   const [mcqLayout, setMcqLayout] = useState<'single' | 'double' | 'quad'>('single'); 
   const [mcqSpacing, setMcqSpacing] = useState<'none' | 'one'>('none');
-  const [isTapescriptEnabled, setIsTapescriptEnabled] = useState(false);
   const [copiedStyle, setCopiedStyle] = useState<{style: any, prompt?: string} | null>(null);
   
   const randomizeTopBottomLineColor = () => {
@@ -1080,8 +1078,8 @@ function App() {
     study: string | number;
   }>({
     mcq: 0,
-    tf: 4, // ( T / F ) at Beginning
-    correctIncorrect: 3, // ( C / I ) at Beginning
+    tf: 4, 
+    correctIncorrect: 0,
     vocabulary: 0,
     circle: 0,
     sentenceCompletion: 0,
@@ -1424,24 +1422,30 @@ function App() {
     } catch { return INITIAL_TEMPLATES; }
   });
 
-  const [selectedInstructionIds, setSelectedInstructionIds] = useState<string[]>(['g_mcq', 'g_correct_incorrect', 'g_circle', 'g_complete_sentences', 'g_pair', 'g_spelling']);
+  const [selectedInstructionIds, setSelectedInstructionIds] = useState<string[]>(['g_circle', 'g_correct_incorrect', 'g_complete_sentences', 'g_complete_story', 'mcq_standard', 'g_pair']);
   const [columnOverrides, setColumnOverrides] = useState<Record<string, number>>({
-    'g_mcq': 1,
+    'g_circle': 2,
     'g_correct_incorrect': 2,
-    'g_circle': 1,
     'g_complete_sentences': 1,
-    'g_pair': 1,
-    'g_spelling': 0
+    'g_complete_story': 1,
+    'mcq_standard': 1,
+    'g_pair': 1
   });
   const [itemCountOverrides, setItemCountOverrides] = useState<Record<string, number>>({
-    'g_mcq': 10,
+    'g_circle': 20,
     'g_correct_incorrect': 20,
-    'g_circle': 10,
     'g_complete_sentences': 10,
+    'g_complete_story': 10,
+    'mcq_standard': 10,
     'g_pair': 10,
-    'g_spelling': 30,
-    'g_write_correct_form': 4,
-    'g_rewrite_sentences': 5
+    'v_study_table_v2': 15,
+    'v_sentence_study': 15,
+    'v_mcq_standard': 15,
+    'v_matching_pro': 15,
+    'v_box': 15,
+    'v_speaking_std': 10,
+    'v_copy_no_answers': 10,
+    'v_synonyms_exercises': 10
   });
   
   const [sourceMaterial, setSourceMaterial] = useState<QuickSource | null>(null);
@@ -1465,7 +1469,7 @@ function App() {
     title: 'DPSS 1',
     theme: 1, // 1 to 6
     showModal: false,
-    exportTableOrDivider: 'TB' as 'TB' | 'DVD'
+    exportTableOrDivider: 'DVD' as 'TB' | 'DVD'
   });
 
   useEffect(() => { 
@@ -2278,6 +2282,28 @@ ${customHtml}
             ${isMatching ? '\n- [MATCHING LETTER MANDATE]: Use unique sequential letters A, B, C, D, E, F, G, H, I, J for the 10 items. DO NOT REPEAT LETTERS.' : ''}
             - [CRITICAL]: Ensure perfect vertical alignment. This table must serve as the student's workspace. ${answerKeyProtocol})`;
         }
+      } else if (t.id === 'mcq_columns_grid') {
+        formatInstruction = `(MANDATORY FORMAT: Use a nested 4-column HTML table for MCQ options A, B, C, and D for each question. 
+          - Question: Standard numbering (1. Sentence...).
+          - Options: Placed on a new line below the sentence. Every set of options MUST be inside a <table> with 4 columns.
+          - Alignment: Ensure A, B, C, D are perfectly aligned across all questions.)`;
+      } else if (t.id === 'mcq_inline_paren') {
+        formatInstruction = `(MANDATORY FORMAT: Parenthetical Inline MCQ. 
+          - FORMAT: Place the options A, B, C, and D strictly within parentheses at the VERY END of each sentence. 
+          - Separator: Use a forward slash "/" between options. 
+          - Example: 1. She is happy. (A. is / B. are / C. am / D. be)
+          - DO NOT put options on new lines or in tables.)`;
+      } else if (t.id === 'g_circle_slash') {
+        formatInstruction = `(MANDATORY FORMAT: Slash Choice Circuit. 
+          - FORMAT: The correct answer choice and its distractor(s) must be presented WITHIN the sentence, separated by a slash and enclosed in square brackets.
+          - Example: 1. My sister [is / are / am] very tall.
+          - No A, B, C, D options allowed.)`;
+      } else if (t.id === 'g_pair') {
+        formatInstruction = `(MANDATORY FORMAT: Double-Gap MCQ Nested Table.
+          - Question: Standard numbering (1. Sentence with two gaps).
+          - Options: Placed on a new line below the sentence. Every set of options MUST be inside a <table> with 4 columns.
+          - Style: Bold each option (e.g., <b>A. visits / likes</b>). 
+          - Alignment: Ensure A, B, C, D are perfectly aligned across all questions.)`;
       } else if (isForcedList) {
         formatInstruction = `(FORMAT: Standard numbered list. ${isPartBackgroundEnabled ? 'MANDATORY: Wrap the entire part in a <div class="..."> with a unique background style class from the PART BACKGROUND PROTOCOL.' : ''} Every numbered item (1., 2., 3., etc.) MUST start on a NEW LINE using an HTML <p> or <br> tag. DO NOT bunch them together in a single paragraph. DO NOT use tables or columns.)`;
       } else if (baseLayout === 0 || (baseLayout === 3 && effectiveCols === 1)) {
@@ -2364,18 +2390,19 @@ ${customHtml}
       : activeModule === 'Vocabulary'
       ? `[MODULE SAFETY GUARD - CRITICAL]: You are generating a VOCABULARY assessment. 
          [VOCABULARY RELEVANCE & VARIETY - ABSOLUTE MANDATORY]:
-         - You MUST follow Rule 40 (Topic-Specific Idioms & Phrasal Verbs).
          - FORBIDDEN: Generic "AI idioms" (piece of cake, break a leg).
          - RELEVANCE: All idioms and phrasal verbs MUST directly relate to the topic of "${topic || fallbackTopic}".
          - VARIETY: DO NOT repeat any idiom or phrasal verb. Use unique terms to boost speaking/vocabulary.
          - SOURCE: Extract phrases from the reading passage if provided.
          
-         [VOCABULARY DISTRIBUTION - FORCE]: For every 10 items, strictly follow this EXACT distribution: 
-         1. EXACTLY 1 EASY/USEFUL IDIOM (e.g., "Piece of cake", "Break a leg").
-         2. RANDOM CHOICE: Either (4 PHRASES + 5 WORDS) OR (3 PHRASES + 6 WORDS).
-         - DEFINITION: A "PHRASE" MUST have 2+ words (e.g., "Take a look", "In the long run"). A "WORD" is 1 word.
-         - [CRITICAL]: I MUST see several multi-word phrases. DO NOT generate only single words. 
-         - [MATCHING LETTER MANDATE]: For EVERY matching exercise with 10 items, use letters A, B, C, D, E, F, G, H, I, J. DO NOT stop at D.
+         [LEXICAL MIX MANDATE (CRITICAL!)]:
+         You are FORBIDDEN from generating only standard single words. To boost students' vocabulary and speaking, you MUST inject phrases. 
+         In EVERY vocabulary exercise, strictly adhere to this mixture ratio (Scale per 10 items):
+         1. 10% Idioms (Strictly related to the topic of "${topic || fallbackTopic}").
+         2. 40% Phrases (MUST include Verb Phrases, Noun Phrases, or Phrasal Verbs related to the topic).
+         3. 50% Single Words (Advanced vocabulary based on level calibration).
+         Example: For a 15-item exercise, use ~1-2 Idioms, ~6 Phrases, ~7-8 Words.
+         - [MATCHING LETTER MANDATE]: For EVERY matching exercise with 10 items, use letters A, B, C, D, E, F, G, H, I, J.
          
          You are strictly FORBIDDEN from testing grammar rules, injecting grammar errors, or including reading passages. 
          - NO READING LOGIC: Do NOT include "Not Mentioned" or "Unknown" options. 
@@ -2399,7 +2426,29 @@ ${customHtml}
       return `- PART ${String.fromCharCode(65 + idx)}: ${formattedLabel} (Item Count: ${itemCountOverrides[t.id] || 10})`;
     }).join('\n');
 
-    const mandatorySequence = activeModule === 'Grammar' 
+    const isHighLevel = ['Level 5', 'Level 6', 'Level 7', 'Level 8', 'Level 9', 'Level 10', 'Level 11', 'Upper Intermediate', 'Advanced', 'IELTS', 'TOEFL'].includes(activeLevel);
+    const levelComplexityInstruction = isHighLevel
+      ? `\n7. [SENTENCE MIX & CONTEXT MANDATE - CRITICAL]: This is an ADVANCED ${activeLevel} test. 
+          - EVERY ITEM MUST provide deep context. FORBIDDEN from using single, isolated sentences for more than 50% of the items.
+          - STRICT RATIO (For every 10 items):
+            * 5 Items: Single sentence (Exactly 1 full stop '.')
+            * 3 Items: Double sentences (Exactly 2 full stops '.')
+            * 2 Items: Triple sentences (Exactly 3 full stops '.')
+          - I define a "sentence" by the presence of a full stop (.). If an item has only 1 full stop, it is ONE sentence.
+          - MANDATORY: This mix is REQUIRED to boost reading comprehension skills.
+          - Every item MUST embed the target in a context that requires critical thinking. FORBIDDEN from using only simple, short single sentences.`
+      : '';
+
+    const vocabularyLexicalInstruction = activeModule === 'Vocabulary'
+      ? `\n8. [LEXICAL MIX MANDATE (CRITICAL DOUBLE FIX)]: I am strictly enforcing the 10-40-50 ratio to ensure you don't output only single words.
+          For the total item count of ANY vocabulary part, you MUST output:
+          - 10% Idioms (Must use an idiom related to "${topic || fallbackTopic}")
+          - 40% Phrases (Must be multi-word Verb Phrases, Noun Phrases, or Phrasal Verbs)
+          - 50% Single Words (Advanced words related to "${topic || fallbackTopic}")
+          STRICT: Do not repeat terms. I MUST see phrasal verbs and multi-word verb phrases. FORBIDDEN from using only single words.`
+      : '';
+
+    const mandatorySequence = (activeModule === 'Grammar' 
       ? `1. GENERATE EXACTLY AND ONLY THE ${selectedInstructionIds.length} REQUESTED PARTS LISTED BELOW. 
 2. [TOPIC DISTRIBUTION]: Focus 100% on "${topic || fallbackTopic}". Distribute nuances of this topic across the requested parts.
 3. [STRICT LIMIT]: DO NOT ADD ANY ADDITIONAL SECTIONS, INTROS, OR OUTROS.
@@ -2420,7 +2469,7 @@ ${componentList}
 3. [MODULE FIREWALL]: No grammar testing in vocabulary sections.
 4. [PART LIST]:
 ${componentList}
-5. [COMPLETENESS]: Generate every part listed below. Number items starting from 1.`;
+5. [COMPLETENESS]: Generate every part listed below. Number items starting from 1.`) + levelComplexityInstruction + vocabularyLexicalInstruction;
 
     const instructionRulerPrompt = instructionRulerStyle > 0 
       ? `[INSTRUCTION RULER - MANDATORY]: After EVERY instruction header (e.g., PART A: ...), you MUST insert a <div class="instruction-ruler-${instructionRulerStyle}"></div>. This is a visual separator that MUST be visible.
@@ -2440,11 +2489,8 @@ ${componentList}
       DO NOT spill header styles (backgrounds/borders) into the exercise body.
     `;
 
-    const listeningTapescriptPrompt = (activeModule === 'Listening' && isTapescriptEnabled)
-      ? `\n[TAPESCRIPT MANDATORY]: You MUST generate a detailed, full-text tapescript for EACH listening exercise part. COLLECT ALL TAPESCRIPTS AND PLACE THEM AT THE VERY END OF THE WORKSHEET in a section titled "### TAPESCRIPTS ###". Provide exactly one tapescript per exercise part. Length and complexity MUST strictly adhere to the requirements for level ${activeLevel}. DO NOT SUMMARIZE.`
-      : '';
-
-    const listeningLogicFirewall = activeModule === 'Listening' ? `\n${LISTENING_LOGIC_FIREWALL.replace(/{{LEVEL}}/g, activeLevel)}` : '';
+    const listeningLogicFirewall = '';
+    const listeningTapescriptPrompt = '';
 
     const finalLogic = `
 ${moduleSafetyGuard}
@@ -2798,18 +2844,45 @@ ${componentLogic}
   
   const handleModuleChange = (m: string) => {
     setActiveModule(m);
-    if (['Grammar', 'Reading', 'Vocabulary', 'Listening'].includes(m)) {
+    if (['Grammar', 'Reading', 'Vocabulary'].includes(m)) {
       setArchitectTab(m as any);
       
       // Set professional defaults based on module selection
       if (m === 'Reading') {
         setSelectedInstructionIds(['r_critical_thinking', 'r_inferential', 'r_mcq', 'r_tf_stmt', 'r_summary_cloze']);
       } else if (m === 'Vocabulary') {
-        setSelectedInstructionIds(['v_study_table_v2', 'v_sentence_study', 'v_mcq_standard', 'v_matching_pro', 'v_box', 'v_speaking_std']);
-      } else if (m === 'Listening') {
-        setSelectedInstructionIds(['l_response', 'l_form_completion_pro', 'l_note_completion_pro', 'l_tf_pro', 'l_short_answer_pro', 'l_cloze_pro']);
+        setSelectedInstructionIds(['v_study_table_v2', 'v_sentence_study', 'v_mcq_standard', 'v_matching_pro', 'v_box', 'v_speaking_std', 'v_copy_no_answers', 'v_synonyms_exercises']);
+        setItemCountOverrides(prev => ({
+          ...prev,
+          'v_study_table_v2': 15,
+          'v_sentence_study': 15,
+          'v_mcq_standard': 15,
+          'v_matching_pro': 15,
+          'v_box': 15,
+          'v_speaking_std': 10,
+          'v_copy_no_answers': 10,
+          'v_synonyms_exercises': 10
+        }));
       } else if (m === 'Grammar') {
-        setSelectedInstructionIds(['mcq_standard', 'g_circle', 'g_correct_incorrect', 'g_complete_sentences', 'g_cloze_passage_short']);
+        setSelectedInstructionIds(['g_circle', 'g_correct_incorrect', 'g_complete_sentences', 'g_complete_story', 'mcq_standard', 'g_pair']);
+        setColumnOverrides(prev => ({
+          ...prev,
+          'g_circle': 2,
+          'g_correct_incorrect': 2,
+          'g_complete_sentences': 1,
+          'g_complete_story': 1,
+          'mcq_standard': 1,
+          'g_pair': 1
+        }));
+        setItemCountOverrides(prev => ({
+          ...prev,
+          'g_circle': 20,
+          'g_correct_incorrect': 20,
+          'g_complete_sentences': 10,
+          'g_complete_story': 10,
+          'mcq_standard': 10,
+          'g_pair': 10
+        }));
       } else {
         setSelectedInstructionIds([]);
       }
@@ -3323,6 +3396,14 @@ ${componentLogic}
                         </div>
 
                         <div className="space-y-3">
+                          <button 
+                            onClick={handleGenerate}
+                            disabled={isGenerating}
+                            className="w-full py-3 bg-orange-600 text-white rounded-xl text-[11px] font-bold uppercase tracking-widest flex items-center justify-center gap-3 hover:bg-orange-700 transition-all shadow-lg shadow-orange-200/50 active:scale-95 disabled:opacity-50"
+                          >
+                            {isGenerating ? <i className="fa-solid fa-spinner animate-spin"></i> : <i className="fa-solid fa-wand-magic-sparkles"></i>}
+                            Build Test
+                          </button>
                           <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Academic Level</label>
                           <select 
                             value={activeLevel}
@@ -3332,21 +3413,6 @@ ${componentLogic}
                             {ACADEMIC_LEVELS.map(l => <option key={l} value={l}>{l}</option>)}
                           </select>
                         </div>
-
-                        {activeModule === 'Listening' && (
-                          <div className="space-y-3">
-                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none block">Enable Tapescript</label>
-                            <div className="pt-2">
-                              <button 
-                                onClick={() => setIsTapescriptEnabled(!isTapescriptEnabled)}
-                                className={`w-full py-4 rounded-2xl text-[10px] font-bold uppercase tracking-widest border transition-all flex items-center justify-center gap-2 ${isTapescriptEnabled ? 'bg-orange-600 text-white border-orange-600 shadow-lg shadow-orange-600/20' : 'bg-slate-50 text-slate-400 border-slate-100 hover:bg-slate-100'}`}
-                              >
-                                <i className={`fa-solid ${isTapescriptEnabled ? 'fa-toggle-on' : 'fa-toggle-off'}`}></i>
-                                {isTapescriptEnabled ? 'Enabled' : 'Disabled'}
-                              </button>
-                            </div>
-                          </div>
-                        )}
 
                         <div className="space-y-3">
                           <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Universal Topic</label>
@@ -4253,13 +4319,12 @@ ${componentLogic}
             <div className="max-w-6xl mx-auto space-y-10">
               {/* Category Selector (Header Table Style) */}
               <div className="bg-white rounded-[40px] p-2 border border-slate-100 shadow-xl flex flex-wrap gap-2 justify-center items-center">
-                {['Grammar', 'Vocabulary', 'Reading', 'Listening', 'Generals', 'Custom'].map(tab => {
+                {['Grammar', 'Vocabulary', 'Reading', 'Generals', 'Custom'].map(tab => {
                   const isActive = architectTab === tab;
                   const icons: Record<string, string> = {
                     'Grammar': 'fa-pen-nib',
                     'Vocabulary': 'fa-book-open',
                     'Reading': 'fa-file-lines',
-                    'Listening': 'fa-ear-listen',
                     'Generals': 'fa-globe',
                     'Custom': 'fa-wand-magic-sparkles'
                   };
@@ -4451,7 +4516,7 @@ ${componentLogic}
                                     onClick={(e) => e.stopPropagation()}
                                     className="text-[9px] text-orange-600 font-black uppercase tracking-widest bg-transparent border-none outline-none cursor-pointer"
                                   >
-                                    {['GRAMMAR', 'VOCABULARY', 'READING', 'LISTENING', 'GENERALS', 'CUSTOM'].map(c => <option key={c} value={c}>{c}</option>)}
+                                    {['GRAMMAR', 'VOCABULARY', 'READING', 'GENERALS', 'CUSTOM'].map(c => <option key={c} value={c}>{c}</option>)}
                                   </select>
                                </div>
                             </div>
@@ -5830,7 +5895,7 @@ ${componentLogic}
                 {settingsTab === 'COMMAND' && (
                    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-6">
                      <div className="flex justify-between items-center px-2"><h3 className="text-[13px] font-black text-slate-900 uppercase tracking-widest">Instruction Templates</h3><button onClick={addTemplate} className="text-[11px] font-black text-orange-600 uppercase border-b-2 border-orange-600">+ New Part</button></div>
-                     <div className="flex bg-slate-100/50 p-1.5 rounded-[24px] gap-1 overflow-x-auto no-scrollbar shadow-sm border border-slate-100 self-start">{['GRAMMAR', 'VOCABULARY', 'READING', 'LISTENING', 'GENERALS', 'TABLES', 'KIDS'].map(cat => (<button key={cat} onClick={() => setActiveTemplateCategory(cat)} className={`px-6 py-2.5 rounded-[18px] text-[10px] font-black uppercase tracking-widest transition-all ${activeTemplateCategory === cat ? 'bg-orange-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-600'}`}>{cat}</button>))}</div>
+                     <div className="flex bg-slate-100/50 p-1.5 rounded-[24px] gap-1 overflow-x-auto no-scrollbar shadow-sm border border-slate-100 self-start">{['GRAMMAR', 'VOCABULARY', 'READING', 'GENERALS', 'TABLES', 'KIDS'].map(cat => (<button key={cat} onClick={() => setActiveTemplateCategory(cat)} className={`px-6 py-2.5 rounded-[18px] text-[10px] font-black uppercase tracking-widest transition-all ${activeTemplateCategory === cat ? 'bg-orange-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-600'}`}>{cat}</button>))}</div>
                      <div className="space-y-3">
                         {instructionTemplates.filter(t => t.category === activeTemplateCategory).map(t => {
                             const isExpanded = expandedTemplateId === t.id;
