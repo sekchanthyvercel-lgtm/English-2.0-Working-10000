@@ -36,20 +36,20 @@ const getGeminiKeys = (userKey?: string): string[] => {
 
 function isQuotaError(error: any): boolean {
     const msg = error?.message?.toLowerCase() || "";
-    return msg.includes("quota") || msg.includes("429") || msg.includes("resource_exhausted") || msg.includes("limit");
+    return msg.includes("quota") || msg.includes("429") || msg.includes("resource_exhausted") || msg.includes("limit") || msg.includes("overload") || msg.includes("503") || msg.includes("unavailable") || msg.includes("fetch failed") || msg.includes("500") || msg.includes("timeout") || msg.includes("internal");
 }
 
 const withRetry = async <T>(
   fn: () => Promise<T>,
-  retries: number = 1,
-  delay: number = 1500
+  retries: number = 3,
+  delay: number = 2000
 ): Promise<T> => {
   try {
     return await fn();
-  } catch (error) {
+  } catch (error: any) {
     if (retries <= 0) throw error;
     await new Promise(resolve => setTimeout(resolve, delay));
-    return withRetry(fn, retries - 1, delay * 2);
+    return withRetry(fn, retries - 1, delay * 1.5);
   }
 };
 
@@ -206,7 +206,8 @@ export const generateNeuralOutline = async (
         }
       });
 
-      const jsonStr = response.text || "[]";
+      let jsonStr = response.text || "[]";
+      jsonStr = jsonStr.replace(/```json/gi, "").replace(/```/g, "").trim();
       const data = JSON.parse(jsonStr);
       
       const addIds = (items: any[]): OutlineItem[] => {
