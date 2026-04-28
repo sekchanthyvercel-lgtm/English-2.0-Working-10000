@@ -273,10 +273,21 @@ const StylePreview: React.FC<{ styleName?: string; typeId?: string; label?: stri
 
     // 2.1 MCQ Specific Layouts (Requested variety)
     if (typeId === 'mcq' || name.includes('MCQ')) {
-      const isBoxed = name.includes('Boxed');
-      const isMinimal = name.includes('Minimal');
+      const isBoxed = name.includes('Boxed') || name.includes('Circle') || name.includes('Square');
+      const isMinimal = name.includes('Minimal') || name.includes('Line');
+      // Variety: 0: A.B.C.D, 1: A)B)C)D), 2: [A][B][C][D], 3: Circled A, B, C, D
+      const variety = Math.floor(Math.random() * 4); 
       const styleLabel = styleName || 'Standard';
       
+      const getLetter = (i: number, varType: number) => {
+        const char = String.fromCharCode(65+i);
+        if (varType === 0) return `${char}.`;
+        if (varType === 1) return `${char})`;
+        if (varType === 2) return `[${char}]`;
+        if (varType === 3) return `<span class="bg-indigo-100 rounded-full w-4 h-4 inline-flex items-center justify-center text-[7px]">${char}</span>`;
+        return `${char}.`;
+      }
+
       return (
         <div className="w-full h-full border border-slate-200 rounded-xl bg-white overflow-hidden shadow-inner p-4 font-sans flex flex-col">
           <div className="text-[10px] font-black text-slate-900 mb-2 flex gap-2">
@@ -288,7 +299,7 @@ const StylePreview: React.FC<{ styleName?: string; typeId?: string; label?: stri
             <div className="grid grid-cols-2 gap-2">
               {['do', 'does', 'is', 'are'].map((opt, i) => (
                 <div key={i} className="border border-slate-200 rounded-md p-1.5 flex items-center gap-2 bg-slate-50 shadow-sm">
-                  <span className="text-[7px] font-bold w-3.5 h-3.5 rounded-full bg-indigo-500 text-white flex items-center justify-center">{String.fromCharCode(65+i)}</span>
+                  <span className="text-[7px] font-bold">{getLetter(i, variety)}</span>
                   <span className="text-[9px] font-medium">{opt}</span>
                 </div>
               ))}
@@ -297,7 +308,7 @@ const StylePreview: React.FC<{ styleName?: string; typeId?: string; label?: stri
             <div className="space-y-1">
               {['do', 'does', 'is', 'are'].map((opt, i) => (
                 <div key={i} className="flex items-center gap-3 py-1 border-b border-slate-50">
-                  <span className="text-[8px] font-black text-slate-400">{String.fromCharCode(65+i)}.</span>
+                  <span className="text-[8px] font-black text-slate-400">{getLetter(i, variety)}</span>
                   <span className="text-[9px]">{opt}</span>
                 </div>
               ))}
@@ -306,7 +317,7 @@ const StylePreview: React.FC<{ styleName?: string; typeId?: string; label?: stri
             <div className="flex gap-4">
               {['do', 'does', 'is', 'are'].map((opt, i) => (
                 <div key={i} className="flex items-center gap-1.5">
-                  <span className="text-[9px] font-bold text-slate-400">{String.fromCharCode(65+i)}.</span>
+                  <span className="text-[9px] font-bold text-slate-400">{getLetter(i, variety)}</span>
                   <span className="text-[9px]">{opt}</span>
                 </div>
               ))}
@@ -2842,7 +2853,7 @@ ${componentLogic}
       if (m === 'Reading') {
         setSelectedInstructionIds(['r_critical_thinking', 'r_inferential', 'r_mcq', 'r_tf_stmt', 'r_summary_cloze']);
       } else if (m === 'Vocabulary') {
-        setSelectedInstructionIds(['v_study_table_v2', 'v_sentence_study', 'v_mcq_standard', 'v_matching_pro', 'v_box', 'v_speaking_std', 'v_copy_no_answers', 'v_synonyms_exercises']);
+        setSelectedInstructionIds(['v_study_table_v2', 'v_sentence_study', 'v_mcq_standard', 'v_matching_pro', 'v_box', 'v_speaking_std', 'v_tf_v2']);
         setItemCountOverrides(prev => ({
           ...prev,
           'v_study_table_v2': 15,
@@ -2851,8 +2862,7 @@ ${componentLogic}
           'v_matching_pro': 15,
           'v_box': 15,
           'v_speaking_std': 10,
-          'v_copy_no_answers': 10,
-          'v_synonyms_exercises': 10
+          'v_tf_v2': 10
         }));
       } else if (m === 'Grammar') {
         setSelectedInstructionIds(['g_circle', 'g_correct_incorrect', 'g_complete_sentences', 'g_complete_story', 'mcq_standard', 'g_pair']);
