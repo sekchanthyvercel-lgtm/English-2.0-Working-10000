@@ -316,7 +316,7 @@ function buildWordSafeHeader(
 
   // ── DEFAULT: Classic clean header (paperDesign 0, 2, 3, 5, 6, 7, 9, 10, 11...) ──
   return `<table border="0" cellspacing="0" cellpadding="0" width="100%"
-    style="width:100%; border-collapse:collapse; margin-bottom:2pt;">
+    style="width:100%; border-collapse:collapse; margin-bottom:2pt; margin-top:-20pt;">
     <tr>
       <td style="border-bottom:2pt solid #000000; padding-bottom:6pt;">
         <table border="0" cellspacing="0" cellpadding="0" width="100%">
@@ -1060,7 +1060,7 @@ export const exportToWord = (
       sectionsHtml.push(`
       <table border="0" cellspacing="0" cellpadding="0" width="100%" style="width: 100%; border-collapse: collapse;">
         <tr>
-          <td style="font-family: '${cleanFontName}', serif; font-size: 12pt; padding-bottom: 4pt; line-height: ${exactLineHeight}; mso-line-height-rule: exactly;">
+          <td style="font-family: '${cleanFontName}', serif; font-size: 12pt; padding-bottom: 0pt; line-height: ${exactLineHeight}; mso-line-height-rule: exactly;">
             ${htmlEl.outerHTML}
           </td>
         </tr>

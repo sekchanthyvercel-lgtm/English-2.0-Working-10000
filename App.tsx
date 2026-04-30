@@ -1266,8 +1266,8 @@ function App() {
   const [activeThemeId, setActiveThemeId] = useState<string>(() => {
     try {
       const saved = localStorage.getItem('dp_theme_v30');
-      return saved || 'default';
-    } catch { return 'default'; }
+      return saved || 'brutalist-pop';
+    } catch { return 'brutalist-pop'; }
   });
 
   const [activeEngine, setActiveEngine] = useState<NeuralEngine>(() => {
@@ -1510,11 +1510,7 @@ function App() {
   }, [paperDesign]);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      const randomTheme = THEMES[Math.floor(Math.random() * THEMES.length)];
-      setActiveThemeId(randomTheme.id);
-    }, 30000);
-    return () => clearInterval(interval);
+    // Rotation disabled
   }, []);
 
   const cyclePriority = (current: Priority): Priority => {
@@ -1815,7 +1811,7 @@ ${customHtml}
                    paperStyles.matching === 'v_draw_line_divided' ? "Matching Divider (Orange Divider - Picture 4 Logic). MANDATORY: Use a 2-column HTML table with a solid thick VIBRANT ORANGE vertical rule line (border-left: 2.5pt solid #f97316; padding-left: 30px). Col 1 (40%): Number + Term. Col 2 (60%): Letter (A, B, C, etc.) + Definition. Ensure letters start exactly at the divider position." :
                    paperStyles.matching === 'm_shape' ? "Shape Bank matching (Oval Box - Picture 3 Logic). Place all vocabulary options/matches in a large rounded oval box (border: 2pt solid green; border-radius: 50pt; padding: 15px; text-align: center; margin: 15px auto; width: 80%; line-height: 2;). Then provide the matching definitions below in a 1-column list with a blank line on the left (e.g., '__________ 1. Definition')." :
                    "Custom Matching style " + paperStyles.matching)}
-[MATCHING LETTER MANDATE]: For all Matching exercises with 10 items, you MUST use exactly 10 unique sequential letters (A, B, C, D, E, F, G, H, I, J). DO NOT repeat letters 'A' or 'B' for multiple definitions. DO NOT truncate the letter list. Each definition MUST have its own unique letter.
+[MATCHING LETTER MANDATE]: For Matching exercises, you MUST use a continuous alphabetical sequence for the second column (e.g., A-J for 10 items, A-O for 15 items). DO NOT repeat letters 'A' or 'B' for multiple definitions. DO NOT truncate the letter list. Every item MUST have its own unique letter.
 - Cloze Style: ${getStyleInstruction('cloze', paperStyles.cloze, "Standard cloze passage with blanks.")}
 - Double MCQ Style: ${getStyleInstruction('doubleMcq', paperStyles.doubleMcq, "Standard double-gap MCQ with 4 options per item.")}
 `;
@@ -1934,7 +1930,8 @@ ${customHtml}
     const subjectInstruction = `\n[LOCALIZATION - CRITICAL]: Use names and places from the following lists to make the test culturally relevant. 
     NAMES: ${currentSubject.names.join(', ')}
     PLACES: ${currentSubject.places.join(', ')}
-    Ensure these names and places are used naturally within the questions and reading texts.`;
+    [TONE_DOWN_LANDMARKS]: Do NOT use landmarks from the PLACES list in every sentence. Focus on standard everyday life activities (e.g., "Park Ji-hoon is buying milk", "Sarah is at the library") with unique names. Use the PLACES list sparingly.
+    [SUBJECT_DIVERSITY]: NEVER use the same subject name more than once in the entire test. Every sentence must have a unique subject.`;
 
     let vocabOrderInstruction = '';
     if (activeModule === 'Vocabulary') {
@@ -1963,19 +1960,21 @@ ${customHtml}
 
     const generationIntegrityInstruction = `
 [GENERATION INTEGRITY - CRITICAL]:
-1. STRICT PART LIMIT: You are strictly AUTHORIZED to generate ONLY the ${selectedInstructionIds.length} parts listed below. You are FORBIDDEN from adding, inventing, or splitting extra sections. Use EXACTLY ${selectedInstructionIds.length} parts.
-2. ALL SELECTED TYPES: You MUST generate content for EVERY SINGLE exercise type selected in the list below. Do NOT skip any. Total parts to generate: ${selectedInstructionIds.length}.
-3. NO EXTRA CONTENT: Do NOT add introductory text, concluding remarks, or "extra" sections beyond the ${selectedInstructionIds.length} requested parts. Stop immediately after the Answer Key.
+1. STRICT PART LIMIT: You are strictly AUTHORIZED to generate ONLY the ${selectedInstructionIds.length} parts listed below. Use EXACTLY ${selectedInstructionIds.length} parts.
+2. PART LABELING & SEQUENCE: Parts MUST be labeled sequentially as PART A, PART B, PART C, etc. in the order they appear. The Teacher Answer Key MUST use these EXACT labels (PART A, PART B...).
+3. ALL SELECTED TYPES: You MUST generate content for EVERY SINGLE exercise type selected.
 4. READING PASSAGE LOGIC & PLACEMENT:
    ${isSingleReadingText 
-     ? "- [ONE READING FOR ALL]: Generate ONLY ONE reading passage. Place it STRICTLY INSIDE ROW 2 of the HTML table for PART A (as specified in the formatting instructions). CRITICAL: DO NOT DUPLICATE the instruction header. There must only be ONE 'PART A:' header. After the passage, directly list the questions in the subsequent row without repeating the header." 
-     : "- [UNIQUE READING PASSAGES]: For each Reading-related part, generate a COMPLETELY UNIQUE reading passage. Each passage MUST be placed STRICTLY INSIDE ROW 2 of the HTML table for that part. CRITICAL: DO NOT DUPLICATE the instruction headers. Only write the header once per part."
+     ? "- [ONE READING FOR ALL]: Generate ONLY ONE reading passage. Place it STRICTLY INSIDE ROW 2 of the HTML table for PART A (as specified in the formatting instructions). CRITICAL: DO NOT DUPLICATE the instruction header. There must only be ONE 'PART A:' header." 
+     : "- [UNIQUE READING PASSAGES]: For each Reading-related part, generate a COMPLETELY UNIQUE reading passage. Each passage MUST be placed STRICTLY INSIDE ROW 2 of the HTML table for that part. CRITICAL: DO NOT DUPLICATE the instruction headers."
    }
    - [CASE RULE]: Reading passages MUST use normal sentence case. NEVER capitalize the entire text.
-5. INSTRUCTION CASING: EVERY SINGLE instruction header (e.g., "PART A:", "PART B:") MUST strictly follow the casing requested above.
-6. ITEM COUNTS: Strictly follow the item count overrides if provided.
-7. VARIETY: Ensure high variety in scenarios and sentence structures.
-8. COMPLETE OUTPUT: Do NOT truncate the response. Ensure every part from 1 to ${selectedInstructionIds.length} is fully written.
+5. INSTRUCTION CASING: EVERY SINGLE instruction header (e.g., "PART A:", "PART B:") MUST strictly follow the casing requested: ${instructionCase}.
+6. MCQ LAYOUT (SAME LINE): If an MCQ has short options (1-3 words), you MUST place them on the SAME LINE as the question if possible, or in a compact horizontal row immediately below. Use 8 non-breaking spaces between options.
+7. [SCRAMBLE_MANDATORY]: All exercises (Matching, MCQ, Word Box) MUST be scrambled. Matching definitions MUST NOT match the row index of their terms. Answer choices (A, B, C, D) must not follow a predictable pattern.
+8. [MATCHING_CONTINUITY]: For matching exercises, labeling for definitions MUST use a continuous sequence (A-O for 15 items). NEVER reset to 'A' halfway through.
+9. [NO_NG_HALLUCINATION]: NEVER provide "NG" (Not Given) as an answer for standard True/False or Correct/Incorrect exercises.
+10. [HUMAN_CHAOS]: Vary item counts slightly (e.g., if asked for 15, you can do 14 or 16). Add distractor options to Matching and Word Banks.
 `;
 
     const rulerInstruction = `\n[RULER STYLE - CRITICAL]: After EVERY instruction header (e.g., PART A: ...), you MUST insert a <div class="instruction-ruler-5"></div>. This is a visual separator.`;

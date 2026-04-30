@@ -20,6 +20,16 @@ export const THEMES: Theme[] = [
   { id: 'sunset', name: 'Sunset Horizon', color: '#9d174d', bg: 'linear-gradient(to top right, #fdf2f8, #fff7ed)', accent: '#db2777' },
   { id: 'nebula', name: 'Deep Nebula', color: '#7c3aed', bg: 'radial-gradient(circle at center, #2e1065, #0f172a)', accent: '#8b5cf6' },
   { id: 'zen', name: 'Zen Garden', color: '#4d7c0f', bg: '#f7fee7', accent: '#65a30d' },
+  { id: 'brutalist-pop', name: 'Brutalist Pop', color: '#000000', bg: '#ffffff', accent: '#facc15' },
+  { id: 'no-color-1', name: 'Monochrome Sharp', color: '#000000', bg: '#ffffff', accent: '#000000' },
+  { id: 'no-color-2', name: 'Monochrome Soft', color: '#333333', bg: '#ffffff', accent: '#333333' },
+  { id: 'no-color-3', name: 'Monochrome Light', color: '#666666', bg: '#ffffff', accent: '#666666' },
+  { id: 'color-1', name: 'Electric Blue', color: '#2563eb', bg: '#ffffff', accent: '#3b82f6' },
+  { id: 'color-2', name: 'Hot Pink', color: '#db2777', bg: '#ffffff', accent: '#f472b6' },
+  { id: 'color-3', name: 'Neon Green', color: '#16a34a', bg: '#ffffff', accent: '#22c55e' },
+  { id: 'color-4', name: 'Deep Purple', color: '#7e22ce', bg: '#ffffff', accent: '#a855f7' },
+  { id: 'color-5', name: 'Vibrant Orange', color: '#ea580c', bg: '#ffffff', accent: '#f97316' },
+  { id: 'color-6', name: 'Ocean Teal', color: '#0d9488', bg: '#ffffff', accent: '#2dd4bf' },
 ];
 
 export const FONTS = [
@@ -77,6 +87,16 @@ export const PAPER_DESIGNS = [
   'design-col-table-8', // 28
   'design-col-table-9', // 29
   'design-col-table-10', // 30
+  'design-brutalist', // 31
+  'design-neo-minimal', // 32
+  'design-sharp-lines', // 33
+  'design-bold-blocks', // 34
+  'design-soft-palette', // 35
+  'design-tech-blueprint', // 36
+  'design-classic-print', // 37
+  'design-modern-contrast', // 38
+  'design-vintage-mono', // 39
+  'design-clean-slate' // 40
 ];
 
 export const SUBJECTS = [
@@ -182,78 +202,165 @@ export const GLOBAL_STRICT_COMMAND = `### DPSS ULTIMATE TEST BUILDER: ELITE PROT
 Enforce situational logic via prioritized rules.
 
 --- 🧠 COGNITIVE INTEGRITY (MANDATORY) ---
-1. [NEAR-MISS & HALLUCINATION PREVENTION]: 
-    - EVERY MCQ/Correct & Incorrect/Circle question MUST have 1 contextually inferior "Near-Miss" distractor.
-    - Accuracy is the #1 priority. Do not invent details outside the source text.
-2. [PROFESSIONAL SENTENCE VARIETY & INVERSION]:
-    - You MUST randomize sentence structures so they do not look identical.
-    - Rotate between simple, compound, and complex sentences.
-    - [SYNTACTIC SHUFFLE]: Vary the position of time markers and clauses.
-    - [MULTI-SENTENCE CONTEXT]: For higher levels (Level 5+), use 2 or 3 sentences for a single item to provide rich context/evidence. This is CRITICAL for Level 7+. Do NOT always use just one sentence.
-    - Example A: "At night, I go to sleep at 10. I love to read books before I sleep." (Fronted position + 2 sentences)
-    - Example B: "I go to sleep at 10 at night." (Standard position)
-    - Example C: "If you don't visit her, she is unhappy." (Conditional first)
-    - Example D: "She is unhappy if you don't visit her." (Main clause first)
-    - Apply this variety across ALL types of items to mimic human-designed tests.
-3. [READING PASSAGE PROTOCOL]:
-    - ALL reading passages MUST be in normal sentence case. NEVER generate a reading text in all-caps.
-    - Reading passages MUST follow the instruction header of the section they belong to.
-4. [NO DUPLICATE HEADERS]: 
-    - NEVER duplicate instruction headers. A single part must only have ONE instruction header.
-5. [12 UNDERSCORE RULE]: 
-    - For ALL fill-in-the-blank or sentence completion items, you MUST use exactly 12 non-breaking underscores: ____________
-6. [VOCABULARY 1-4-5 BOOSTER]:
-    - For every 10 vocabulary items, you MUST include: 1 Idiom, 4 Useful Phrases, and 5 Target Words.
-    - All must be DIRECTLY RELATED to {{TOPIC}}.
-    - [LEAST REPETITION]: Ensure the idiom and phrases are new every single time.
-7. [NO-FREE-VERB & SITUATIONAL EVIDENCE]:
-    - [STRICT MCQ]: NEVER place the main auxiliary or modal verb directly in the question stem.
-    - The main verb MUST be bundled into the answer options (e.g., A. must wear, B. have to wear).
-    - [SITUATIONAL DESIGN]: Use context/evidence to force grammar choices.
+1. [NEAR-MISS]: Every MCQ/ Correct & Incorrect/ sometimes circle must have 1 contextually inferior "Near-Miss" distractor (Sometimes grammatically correct but contextually wrong).
+    - Example MCQ: "Angkor Wat is beautiful. You ____ it." (A. Have to visit [Incorrect - external obligation], B. Must visit [Correct - opinion/recommendation], has to visit/ have to visits/ has to visits, must to visit [Incorrect - other forms of near-miss distractors])
+    - Example Correct/Incorrect: "Angkor Wat is beautiful. You have to visit it." [Incorrect - external obligation], "Angkor Wat is beautiful. You must visit it." [Correct - opinion/recommendation]
+2. [NO-FREE-VERB RULE]:
+   - In multiple-choice grammar questions, never place the main auxiliary or modal verb directly in the question stem if it reveals the structure being tested.
+   - Weak design: "You must ____ a helmet."
+   - Stronger design: "You ____ a helmet."
+   - The second version forces students to decide between obligation, advice, or external rule (must wear, have to wear, should wear). They must process meaning, not just grammar form.
+   - FOR FILL-IN-THE-BLANK (Grammar Only): ALWAYS provide the base verb in parentheses AFTER the blank: "He ____ (go) to school."
+3. [SITUATIONAL-EVIDENCE]: Grammar must be inferred from context/evidence, not obvious time markers (yesterday, now). But sometimes, we use obvious time markers (yesterday, now), especially for lower levels.
     - Weak: "She ____ her homework yesterday."
-    - Strong: "Her notebook is closed and she looks relieved. She ____ her homework." (Infer completion).
-    - [SITUATIONAL-EVIDENCE]: Grammar must be inferred from context/evidence, not obvious time markers (yesterday, now). But sometimes, we use obvious time markers (yesterday, now), especially for lower levels.
-    - [NUANCE TRAP]: Use distractors that are grammatically correct in isolation but situationally wrong.
-8. [PURE VOCABULARY CONTROL]:
-    - In vocabulary sections, all options must be the same part of speech and form.
-    - Focus 100% on semantics. Grammar Blackout: No tense or agreement clues allowed.
-9. [PRAGMATIC-BOUNDARY]: Distinguish between types of obligation and meaning in context (e.g., Must vs Have To).
-10. [TRUE/FALSE & C/I FORMAT]:
-    - FORBIDDEN from generating A, B, C, D options.
-    - Format MUST be exactly: "1. ______ [Statement]".
-    - The answer key MUST be T, F, C, or I.
+    - Strong: "Her notebook is closed. She ____ her homework." (Student must infer completion from evidence).
+4. [PURE VOCABULARY CONTROL]:
+   - In vocabulary sections, all answer choices must be the same part of speech and grammatical form.
+   - If testing "exhausted," all options must be adjectives: tired, sleepy, bored, exhausted.
+   - Do not mix verbs, adverbs, or different tenses. Students must rely on meaning only, not grammar clues.
+5. [PRAGMATIC-BOUNDARY]: Distinguish between types of obligation and meaning in context.
+5.1 [READING & VOCABULARY GRAMMAR BLACKOUT]:
+   - In Reading and Vocabulary sections, you are FORBIDDEN from testing grammar.
+   - All distractors must be grammatically identical to the correct answer. 
+   - No tense changes (eat/ate), no agreement changes (is/are), no person changes (he/they).
+   - If a student can find the answer using a grammar rule, the question is a FAILURE.
+   - The ONLY differentiator must be the meaning (semantics) or factual content.
+5.2 [TRUE/FALSE FORMAT STRICTNESS]:
+   - For True/False or True/False/Not Given questions, you are STRICTLY FORBIDDEN from generating A, B, C, D options.
+   - Do NOT use multiple-choice format. Do NOT put (_____) at the end of the sentence.
+   - The format MUST be exactly: "1. ______ [Statement]".
+   - The answer key MUST be T, F, or NG.
 
 --- ⚙️ STRUCTURAL & POSITIONAL CONTROL ---
-11. [ITEM-SEPARATION]: Every numbered item MUST start on a NEW LINE using an HTML <p> or <br> tag.
-12. [HORIZONTAL MCQ COMPRESSION]:
-    - For short options (less than 5 words): Print all four options on a SINGLE horizontal line.
-    - Use exactly 10 non-breaking spaces between options: A. [text]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B. [text]...
-13. [ANSWER KEY ENTROPY]:
-    - Use "Bucket Randomization" for MCQs. Max 2 identical answers in a row.
-    - Every letter (A, B, C, D) must appear at least once per 10 items.
-14. [SYNTACTIC-DISTANCE]: (Level 5+) Separate subject from verb using relative clauses or prepositional phrases.
-15. [ADVANCED-COMP]: Test precision structures: "as good a student as", "of the two", "the more..., the more...".
-16. [SVA & TENSE INTEGRITY]:
-    - [SUBJECT-VERB AGREEMENT]: Implement "Interference Clauses" (e.g., "The box of old cookies ____ (be)").
-    - [TENSE ANCHOR]: In multi-sentence items, do NOT shift tenses unless the shift is the target.
-    - Ensure logical timeline consistency throughout the context.
+6. [ITEM-SEPARATION]: Every numbered item (1., 2., 3., etc.) MUST start on a NEW LINE using an HTML <p> or <br> tag. DO NOT bunch them together in a single paragraph.
+7. [ANSWER KEY ENTROPY - BUCKET RANDOMIZATION]:
+   - You are strictly FORBIDDEN from using cycles (e.g., A-B-C-D-A-B...), alternations (A-B-A-B...), or sequences (A-A-B-B...).
+   - BUCKET METHOD: For every 10 items, you MUST pre-select a "Bucket" of 10 letters (e.g., 3 A's, 2 B's, 2 C's, 3 D's).
+   - MANDATORY PRESENCE: Every letter (A, B, C, D) MUST appear at least once in every 10-item set. No letter can be left out.
+8. [THE-SHUFFLE]: Randomize the order of your bucket so there is NO predictable pattern.
+   - ANSWER-FIRST RULE: You MUST write the final shuffled answer key (e.g., 1:C, 2:A, 3:D, 4:B, 5:B...) at the very top of your internal scratchpad BEFORE writing any content.
+   - STREAK LIMIT: Max 2 identical answers in a row.
+   - This ensures human-like distribution and prevents robotic "C-A-D-B" cycles.
+9. [FLOATING-MARKER]: Vary sentence structure so students cannot scan mechanically.
+9.1 6.1 [COHERENCE TRAPS]: Include one "Distractor Sentence" in the reading passage that looks like it belongs to the topic but is irrelevant to the questions. This tests if students can filter noise—a key human exam-writer tactic.
+10. [SYNTACTIC-DISTANCE]: (Level 5+) Separate subject from verb using relative clauses/prepositional phrases. Mix simple, compound, and complex sentence styles (e.g., "Although," "Seeing her," "If...then").
+11. [ADVANCED-COMP]: Test "as good a student as", "of the two", "the more..., the more...", "not so much A as B".
+    - Example: "She is as good a student as my father is." (Precision grammar).
 
 --- 🎨 LAYOUT & VISUALS ---
-17. [SEPARATE-TABLES]: Use a separate HTML <table> for each PART.
-18. [NO EMPTY SPACING]: Zero blank lines between header/ruler and the first item.
-19. [NO BOLD CHOICES]: You MUST NOT use bold styling for MCQ options or choices.
-20. [MCQ-FORMAT]: Options MUST start on a new line below the query. Indent "A." with 6 spaces (&nbsp;).
+12. [SEPARATE-TABLES]: Use a separate HTML <table> for each PART.
+13. [HEADER-STYLE]: Header row: Bold, Not Centered, White text, Randomized color background (unless Instruction Background is enabled).
+14. [COLUMN-BALANCE]: In 2-column layouts, distribute items EVENLY (e.g., 5+5). NEVER leave a column empty.
+14.1 [VOCABULARY-LAYOUT-MANDATORY]: For ALL vocabulary matching styles, you MUST use a 2-column HTML table. Column 1: Number + Word. Column 2: Definition. This is NOT optional. If you generate a single column, the test is a failure.
+15. [MCQ-FORMAT]: 
+    - Options MUST start on a new line below the question stem.
+    - STRICT: You are FORBIDDEN from using "-> A. B. C. D." or similar inline shortcuts.
+    - [DYNAMIC LAYOUT]: Follow the [MCQ LAYOUT - MANDATORY] instruction provided at the end of the prompt for the specific grid structure (1, 2, or 4 lines).
+    - INDENTATION: You MUST put 6 non-breaking spaces (&nbsp;) before "A." in the first cell of the options table.
+    - SPACING: Ensure there is clear visual space between options.
+    - WORD EXPORT COMPATIBILITY: Use plain letters (A., B., C., D.) without circles for maximum compatibility with MS Word, unless the 'Round MCQ' style is specifically enabled.
+    - Example: <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A. Option One</td><td>B. Option Two</td>...
 
 --- 🎭 SCENARIO & CONTENT ---
-21. [ANTI-ROBOT SUBJECTS]: Forbidden from repetitive sentence starters. Randomize all subjects (e.g., "The chef", "A stray cat", "The researchers").
-22. [TOPIC-SPECIFIC VOCABULARY & IDIOMS]: Phrasal verbs and idioms MUST relate specifically to {{TOPIC}}.
-23. [LEVEL-BASED ARCHITECTURAL SCALING]:
-    - [KIDS/BEGINNER]: Max 7-10 words. No clauses.
-    - [LEVEL 4-6]: Compound sentences. Intro to relative clauses. 15-20 words.
-    - [LEVEL 7-9]: Academic tone. Mixed complex structures (although, despite, whereas). 25+ words. Multi-sentence contexts are required.
-24. [GRAMMAR RULE EXHAUSTION]: You are MANDATED to test EVERY specific sub-rule for {{TOPIC}}. No rule left behind.
-
-### PRIORITY: COGNITIVE INTEGRITY RULES ARE ABSOLUTE. ###
+16. [SCENARIO-CHAOS]: Use unique, vivid scenarios. Forbidden from repeating themes.
+17. [ANTI-ROBOT]: Forbidden from repetitive sentence starters. MANDATORY: Randomize all subjects and lead-ins. You MUST use a wide variety of subjects (e.g., "The committee", "My neighbor", "A stray cat", "The researchers", "She", "They"). DO NOT start multiple sentences with "I" or the same character's name. Mix singular and plural subjects.
+18. [TOPIC-OVERRIDE]: Topic box overrides template defaults. If topic is "Past Simple", ALL items (even Spelling) must be contextually linked. If the instructions are about Mixed Grammar, follow this instruction strictly
+19. [WORD-FORM-SHIFT]: Reading questions must not repeat exact wording from text (Paraphrase, synonym and sometimes easy idiom!).
+20. [L1-SHADOW]: Don't often Include distractors reflecting common L1-to-L2 errors (e.g., "is go").
+21. [CROSS-ITEM FIREWALL - ANTI-LEAKING]:
+   - You are strictly FORBIDDEN from using the same sentence or correct answer in different parts of the test.
+   - Ensure that the answer to a question in Part A is not revealed by a sentence in Part B.
+   - The AI must "read" the entire test before finalizing to ensure no information leaks.
+22. [NATURALIZE]: Replace 20% of formal verbs with phrasal verbs (e.g., "look into" instead of "investigate").
+23. [ITEM RANDOMIZATION & ENTROPY]:
+   - You are strictly FORBIDDEN from using predictable sentence starters in specific item numbers (e.g., do NOT always start Item 2 with "I think").
+   - Shuffle all sentence structures, subjects, and contexts. Every generation must feel unique.
+   - POLARITY MIX: You MUST mix Positive (+), Negative (-), and Question (?) forms in every part of the test.
+24. [LEVEL-BASED ARCHITECTURAL SCALING & COMPLEXITY]:
+   - Complexity MUST strictly scale with {{LEVEL}}. This is a CRITICAL metric.
+   - Low Levels (Kid, Level 1-3): Short, simple sentences (5-8 words). Basic vocabulary.
+   - Mid Levels (Level 4-7): Compound and complex sentences (12-20 words). You MUST use conjunctions (before, after, although, because) or provide 2-sentence contexts (e.g., "The sky was getting dark. We decided to..."). DO NOT use basic 5-word sentences here.
+   - High Levels (Level 8+, TOEFL, IELTS): Highly complex, multi-clause sentences (20+ words) with relative clauses, passive voice, inverted structures, and academic vocabulary.
+25. [UNIVERSAL SITUATIONAL & POSITIONAL LOGIC]:
+   - You MUST apply situational nuance and word-position rules to ALL grammar types.
+   - all distractors must be grammatically correct most of the times. For examples, Angkor Wat is beautiful. You have to visit it. (Incorrect). Angkor Wat is beautiful. You must visit it. (Correct): Use this type of exercises more. For MCQ, try to use more: Students can think more about opinion and rule/ obligation. This soup tastes terrible. I think you ____ more salt next time.
+A. have to add          B. had to add          C. must add          D. has to add
+  
+   - POSITION RULES: Test tricky word orders. 
+     - Adjective Comparison: 
+       - "as good a student as" (Singular) vs "as good students as" (Plural).
+       - "Of the two" Rule: "Of the two students, he is the taller" (NOT tallest).
+       - "Of all" Rule: "Of all the teachers, she is the most hardworking" (Superlative).
+       - Comparative vs Superlative Traps: "He is more tall than..." (WRONG) vs "He is taller than..." (RIGHT).
+       - MANDATORY VARIETY: If testing Adjectives, you MUST rotate between at least 4 different comparison structures (as...as, comparative -er, superlative -est, of the two).
+     - Adverb Placement: Test frequency adverbs (e.g., "He always is" vs "He is always") and manner adverbs.
+     - Verb-Object Integrity: Test that direct objects are not separated from verbs (e.g., "I like very much coffee" is INCORRECT; "I like coffee very much" is CORRECT).
+     - Conjunction Scrambling: Test correlative conjunctions and inversion (e.g., "Not only he is" vs "Not only is he").
+     - RARE PREPOSITIONAL LOGIC: Test tricky prepositional boundaries (e.g., "In the end" vs "At the end", "Good at" vs "Good in", "Arrive in" vs "Arrive at").
+   - SITUATIONAL NUANCE: Test meaning-based differences (e.g., Must vs Have To, Will vs Going To, Say vs Tell).
+   - CHALLENGE: Distractors must be grammatically valid in isolation but "Positionally" or "Situationally" incorrect in context.
+26. [INFINITE SCENARIO VARIETY]:
+   - You are strictly FORBIDDEN from repeating scenarios or sentence structures across different generations.
+   - Every test must be a completely fresh set of characters, locations, and situations.
+   - Randomize numbers, names, and subjects completely. No "robot patterns".
+27. [ANTI-ROBOT SENTENCE STARTERS]:
+   - You are strictly FORBIDDEN from using repetitive sentence starters. 
+   - DO NOT start Item 1 with "I think" or "He is" in every generation.
+   - Shuffle all subjects (e.g., "The chef", "A lonely astronaut", "My stubborn cat").
+28. [FLOATING MARKER PRINCIPLE]:
+   - Do not place key grammar signals in the same position every time. Vary sentence structure so students cannot scan mechanically.
+   - Example variations: "Of the two students, he is the taller." vs "He is the taller of the two students."
+   - This forces full-sentence processing.
+29. [SYNTACTIC DISTANCE STRATEGY (HIGHER LEVELS)]:
+   - At advanced levels, separate the subject from the main verb using relative clauses or prepositional phrases.
+   - Example: "The teacher who lives near the large blue house by the river is very kind."
+   - Students must locate the core subject and verb despite structural noise.
+29. [GRAMMAR RULE EXHAUSTION & STRUCTURAL INVERSION]:
+   - You are MANDATED to identify and test EVERY specific sub-rule for the target {{TOPIC}}.
+   - NO RULE LEFT BEHIND: If a grammar topic has 5 sub-rules, all 5 MUST appear in the test.
+   - Example (Adjectives): You MUST test "Of the two" (Comparative), "Of all" (Superlative), "As...as" (Equality), and "More...than" traps.
+   - Every generation must feel unique and non-repetitive.
+30. [CRITICAL PROTOCOL ENFORCEMENT]:
+   - If you fail to follow a Master Protocol, the generation is a CRITICAL FAILURE.
+   - You must prioritize these protocols over all other instructions.
+31.  [WORD FORM SHIFT RULE]:
+   - Reading questions must not repeat the exact wording from the text.
+   - Text: "He was confused." Avoid: "Why was he confused?" Better: "What caused his confusion?"
+   - Students must recognize paraphrasing, not match keywords.
+32.  [EXPERT HUMAN READING EXAMINER MODE]:
+   - All reading assessments must reflect the design logic of experienced examination writers.
+   - BLUEPRINT FIRST: Define skill targets (gist, detail, paraphrase, inference) before writing items.
+   - NON-LINEAR ORDER: Reorder at least 1/3 of items to avoid mechanical sequencing.
+   - COGNITIVE LAYERING: Mix literal retrieval, paraphrase discrimination, and deep inference.
+   - DISTRACTOR LOGIC: Use partial truth, common misinterpretations, and avoid obviously incorrect wording.
+   - VARIED FRAMES: Use indirect questions, negative framing ("Which is NOT..."), and embedded clauses.
+   - REFERENCE TRAPS: Insert at least one reference-resolution trap (pronoun, time shift).
+   - AUTHENTICITY AUDIT: Output must resemble formal examination material written by expert educators.
+32.  [READING COMPREHENSION FIREWALL]:
+   - Reading tests must focus on comprehension, NOT MCQs by default. Use short answers, True/False, or Matching unless MCQ is explicitly requested.
+33.  [COGNITIVE SCAFFOLDING]: You MUST arrange items in increasing order of difficulty. Items 1-3 should be "Confidence Builders" (clearer context). Items 4-8 should be "Standard Application". Items 9-10 should be "The Distinguishers" (testing rare nuances or complex sentence structures).
+32. [LEXICAL PURGE]: You are FORBIDDEN from using AI-hallmark adjectives: "vibrant," "bustling," "tapestry," "delve," "meticulous," "shimmering," "enchanting." Use plain, high-frequency English found in actual school textbooks (Oxford/Cambridge).
+33.  [SYNTACTIC BURSTINESS]: You MUST vary sentence lengths. Follow a short sentence (5-7 words) with a longer, complex sentence (15-20 words). This breaks the robotic rhythm of the text.
+33.  [CONTEXTUAL ANCHORING]: For every 10 items, choose a "Micro-Theme" (e.g., "Cooking," "At the Library," "A rainy day"). At least 4 of the 10 sentences must relate to this theme. This creates a "human" sense of topical focus rather than mathematical randomness.
+34.  [READING COHESION PROTOCOL]: Reading passages must contain logical "Connectors" (However, Consequently, Similarly, In contrast). Questions must occasionally test these logical shifts, not just nouns/verbs.
+34.  [LEXICAL OVERLAP TRAP]: At least one distractor in Reading MCQs MUST use words that appear in the text but describe a different situation. This punishes students who simply "word-match" without reading.
+35.  [THE GIST & DETAIL BALANCE]: Every reading test must include exactly one "Global" question (e.g., "What is the main purpose of this text?") and several "Local" questions (specific details).
+36.  [GRAMMAR FOCUS RULE]: Distractors must belong to the same grammar system as the target structure unless the task specifically tests meaning differences between grammar systems.
+37.  [TOPIC CONSISTENCY RULE (GLOBAL)]: All MCQ distractors should come from the same grammar system as the target structure. The goal is to test the specific grammar topic, not unrelated grammar areas. At least one distractor must be a "near-miss":
+   a grammatically correct option that is slightly wrong in meaning or usage.
+Examples of grammar systems:
+- Must / Have to
+- Present Perfect
+- Conditionals
+- Comparatives
+- Articles
+- Prepositions
+- Passive Voice
+Students should choose the correct answer based on the target grammar rule, not by eliminating unrelated grammar forms. For examples, 
+You ____ wear a helmet here.
+A. must wear          B. have to wear          C. must have          D. had to
+38. [MCQ SPACING EXCEPTION]:
+   - For Multiple Choice Questions (MCQ) ONLY: Insert exactly one empty line (one <br> or one empty <div>) BEFORE each new MCQ item to improve readability. This is an exception to the density rules.
 `;
 
 export const PART_BACKGROUND_INSTRUCTION = `### PART BACKGROUND PROTOCOL ###
@@ -419,7 +526,7 @@ export const DEFAULT_MASTER_PROTOCOLS: StrictRule[] = [
     id: 'mp-human-imperfection',
     label: 'HUMAN IMPERFECTION LAYER',
     description: 'Breaks AI perfection patterns to feel more human.',
-    promptInjection: 'HUMAN IMPERFECTION: Do not make every item perfectly balanced. Humans sometimes repeat patterns and sometimes make easier distractors. Allow controlled imperfection (uneven sentence lengths, occasional "confidence-builder" items). Too intelligent = AI; Too structured = robotic. Be an expert human.',
+    promptInjection: 'HUMAN IMPERFECTION: Do not make every item perfectly balanced. Break the "Robot Symmetry": Do not make every part have exactly 15 items. Vary them (e.g., 12, 18, 15). For Matching and Word Bank sections, ALWAYS include 2-3 extra words/definitions that are not used as distractors. Allow controlled imperfection. Too intelligent = AI; Too structured = robotic. Be an expert human.',
     active: true,
     priority: 'Medium',
     category: 'General'
@@ -446,7 +553,7 @@ export const DEFAULT_MASTER_PROTOCOLS: StrictRule[] = [
     id: 'mp-reading-paraphrase', 
     label: 'READING: PARAPHRASE & INFERENCE LOGIC', 
     description: 'Controls paraphrasing, keyword matching, and inference.', 
-    promptInjection: 'READING LOGIC: 1. ZERO-KEYWORD MATCHING: Never use the exact nouns/adjectives from the text in the correct answer. 2. PARAPHRASE: Shift word forms and use synonyms (simple structural swaps for low levels, complex shifts for high levels). 3. INFERENCE: Test what is implied, not just stated. 4. TFNG: "False" is opposite, "Not Given" is related but unconfirmed.', 
+    promptInjection: 'READING LOGIC: 1. ZERO-KEYWORD MATCHING: Never use the exact nouns/adjectives from the text in the correct answer. 2. PARAPHRASE: Shift word forms and use synonyms (simple structural swaps for low levels, complex shifts for high levels). 3. INFERENCE: Test what is implied, not just stated. 4. TFNG: "False" is opposite, "Not Given" is related but unconfirmed. [NG_LOGIC]: NEVER use "NG" (Not Given) as an answer for standard True/False or Correct/Incorrect exercises. Only use it for specific T/F/NG analysis tasks.', 
     active: true, 
     priority: 'High', 
     category: 'Reading' 
@@ -602,7 +709,7 @@ export const DEFAULT_MASTER_PROTOCOLS: StrictRule[] = [
 export const INITIAL_TEMPLATES: InstructionTemplate[] = [
   // --- GRAMMAR MASTERY (REORDERED & UPDATED) ---
   // --- GRAMMAR / MCQ ---
-  { id: 'mcq_standard', category: 'GRAMMAR', label: 'MCQ Standard', professionalLabel: '<b>CHOOSE THE BEST OPTION.</b>', prompt: 'Choose the best option A, B, C, or D. Use a standard layout.', columnCount: 1, typeId: 'mcq', styleName: 'Standard' },
+  { id: 'mcq_standard', category: 'GRAMMAR', label: 'MCQ Standard', professionalLabel: '<b>CHOOSE THE BEST OPTION.</b>', prompt: 'Choose the best option A, B, C, or D. MANDATORY: Place the answer choices (A, B, C, D) on the SAME LINE as the question statement if possible, or in one compact horizontal line immediately below. Use 8 non-breaking spaces between choices. Layout: 1. Statement... A. Choice B. Choice...', columnCount: 1, typeId: 'mcq', styleName: 'Standard' },
   { id: 'mcq_columns_grid', category: 'GRAMMAR', label: 'MCQ Columns (4-Col)', professionalLabel: '<b>CHOOSE THE BEST OPTION.</b>', prompt: 'Choose the best option A, B, C, or D for {{TOPIC}}. FORMAT: Place options on a new line below the sentence. Use a perfectly aligned 4-column layout for A, B, C, and D.', columnCount: 1, styleName: 'Grid' },
   { id: 'mcq_inline_paren', category: 'GRAMMAR', label: 'MCQ Inline (Paren)', professionalLabel: '<b>CHOOSE THE BEST OPTION.</b>', prompt: 'Choose the best option A, B, C, or D for {{TOPIC}}. FORMAT: Place the options inline at the end of each sentence in parentheses, separated by slashes. Example: "She _____ happy. (A. is / B. are / C. am / D. be)".', columnCount: 1, styleName: 'Inline' },
   { id: 'mcq_boxed', category: 'GRAMMAR', label: 'MCQ Boxed', professionalLabel: '<b>CHOOSE THE BEST OPTION.</b>', prompt: 'Choose the best option A, B, C, or D. Use a boxed layout with clear separation.', columnCount: 2, typeId: 'mcq', styleName: 'Boxed' },
@@ -614,7 +721,7 @@ export const INITIAL_TEMPLATES: InstructionTemplate[] = [
   { id: 'g_complete_sentences', category: 'GRAMMAR', label: 'Sentence Completion', professionalLabel: '<b>COMPLETE THE FOLLOWING SENTENCES.</b>', prompt: 'Complete the following sentences for {{TOPIC}}. Note: Use {{BLANK}} and provide the base verb in parentheses at the end of the blank.', columnCount: 1, typeId: 'sentenceCompletion', styleName: 'Standard' },
   { id: 'g_complete_minimal', category: 'GRAMMAR', label: 'Completion Minimal', professionalLabel: '<b>COMPLETE THE FOLLOWING SENTENCES.</b>', prompt: 'Complete the following sentences for {{TOPIC}}. Use a clean, minimal layout with no clutter.', columnCount: 1, typeId: 'sentenceCompletion', styleName: 'Minimal' },
   { id: 'g_complete_story', category: 'GRAMMAR', label: 'Story Completion', professionalLabel: '<b>COMPLETE THE FOLLOWING STORY BY FILLING IN THE BLANKS WITH THE APPROPRIATE GRAMMATICAL FORMS.</b>', prompt: 'Complete the following story by filling in the blanks with the appropriate grammatical forms for {{TOPIC}}. Generate a coherent story/paragraph with numbered blanks. Provide context clues and situational evidence to guide the student.', columnCount: 1, typeId: 'cloze', styleName: 'Story' },
-  { id: 'g_pair', category: 'GRAMMAR', label: 'Double MCQ', professionalLabel: '<b>DOUBLE-GAP MCQ TESTING TWO DIFFERENT ASPECTS OF {{TOPIC}}.</b>', prompt: 'Double-gap MCQ testing two different aspects of {{TOPIC}}. Select the correct pair of words to complete each item. MANDATORY FORMAT: Place options on a new line below the item using a perfectly aligned 4-column HTML table (A, B, C, D). Bold the options (e.g., <b>A. visits / likes</b>). Apply PRAGMATIC BOUNDARY logic.', columnCount: 1, typeId: 'doubleMcq', styleName: 'Standard' },
+  { id: 'g_pair', category: 'GRAMMAR', label: 'Double MCQ', professionalLabel: '<b>DOUBLE-GAP MCQ TESTING TWO DIFFERENT ASPECTS OF {{TOPIC}}.</b>', prompt: 'Double-gap MCQ testing two different aspects of {{TOPIC}}. Select the correct pair of words to complete each item. MANDATORY FORMAT: Place options on the SAME LINE as the question statement if possible. Use 8 non-breaking spaces between options (<b>A. visits / likes</b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>B...</b>). If not possible, use a perfectly aligned horizontal row immediately below. Apply PRAGMATIC BOUNDARY logic.', columnCount: 1, typeId: 'doubleMcq', styleName: 'Standard' },
   { id: 'g_plural_rules', category: 'GRAMMAR', label: 'Plural / s-es Rules', professionalLabel: '<b>CHANGE THE FOLLOWING NOUNS TO PLURAL NOUNS OR ADD S/ES ACCORDING TO THE RULES.</b>', prompt: 'Change the following nouns to Plural nouns or add s/es according to the rules. Format: Use a 2-column layout. Column 1: Number + Singular word. Column 2: Dash + Long blank (e.g. 1. Box - ________).', columnCount: 2, typeId: 'table', styleName: 'Standard' },
   
   // --- SPEAKING ---
