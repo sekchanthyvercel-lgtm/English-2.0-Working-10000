@@ -2000,7 +2000,13 @@ ${activeModule === 'Reading' ? `4. READING PASSAGE LOGIC & PLACEMENT:
    }
    - [CASE RULE]: Reading passages MUST use normal sentence case. NEVER capitalize the entire text.` : ''}
 5. INSTRUCTION CASING: EVERY SINGLE instruction header (e.g., "PART A:", "PART B:") MUST strictly follow the casing requested: ${instructionCase}.
-6. MCQ LAYOUT (SAME LINE): If an MCQ has short options (1-3 words), you MUST place them on the SAME LINE as the question if possible, or in a compact horizontal row immediately below. Use 8 non-breaking spaces between options.
+6. MCQ LAYOUT (7-15 PROTOCOL): Options A, B, C, D MUST be placed on ONE single line BELOW the question stem. 
+   - STEM: Ends with a line break.
+   - OPTIONS LINE: Exactly 7 &nbsp; before A., exactly 15 &nbsp; between options.
+   - EXAMPLE:
+     1. This is the question stem.
+     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A. Option One&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B. Option Two...
+   - THIS IS AN ABSOLUTE REQUIREMENT. NO SAME-LINE MERGING.
 7. [SCRAMBLE_MANDATORY]: All exercises (Matching, MCQ, Word Box) MUST be scrambled. Matching definitions MUST NOT match the row index of their terms. Answer choices (A, B, C, D) must not follow a predictable pattern.
 8. [MATCHING_CONTINUITY]: For matching exercises, labeling for definitions MUST use a continuous sequence (A-O for 15 items). NEVER reset to 'A' halfway through.
 9. [NO_NG_HALLUCINATION]: NEVER provide "NG" (Not Given) as an answer for standard True/False or Correct/Incorrect exercises.
@@ -2424,7 +2430,7 @@ ${activeModule === 'Reading' ? `4. READING PASSAGE LOGIC & PLACEMENT:
       const formattedPrompt = t.prompt;
         
       return `[SECTION START - ${String.fromCharCode(65 + idx)}]: (DO NOT PRINT "SECTION ${String.fromCharCode(65 + idx)}")
-[MANDATORY SECTION HEADER]: You MUST output this exact text as the visible title for this part: ${formattedHeader}
+[MANDATORY SECTION HEADER]: Output the Title ONLY ONCE. If specified in a table row below, DO NOT PRINT IT ABOVE. Title: ${formattedHeader}
 
 [LLM INTERNAL RULES - DO NOT PRINT THESE]:
 ${formattedPrompt.replace(/{{BLANK}}/g, selectedBlankStyle)}
@@ -2437,7 +2443,7 @@ ${rulerInstruction}
 ${instructionVisualPrompt}
 ${answerKeyProtocol}
 
-[CLEAN HEADER PROTOCOL]: Place the mandatory header ONLY ONCE. If the formatting instruction above (Row 1) specifies putting the header inside a table row, YOU MUST NOT print the header again outside the table. DO NOT PRINT THE TITLE TWICE. Avoid double headers at all costs.`;
+    [CLEAN HEADER PROTOCOL - ABSOLUTE]: DO NOT PRINT THE TITLE TWICE. If you place it inside a table row (header-row), do NOT print it as a separate <div> or <b> tag above the table. ONE HEADER PER PART ONLY. Avoid double headers at all costs. Failure to do this makes the test look stupid.`;
     }).join('\n\n');
 
     const moduleSafetyGuard = activeModule === 'Grammar'
@@ -2449,6 +2455,7 @@ ${answerKeyProtocol}
          - RELEVANCE: All idioms and phrasal verbs MUST directly relate to the topic of "${topic || fallbackTopic}".
          - VARIETY: DO NOT repeat any idiom or phrasal verb. Use unique terms to boost speaking/vocabulary.
          - SOURCE: Extract phrases from the reading passage if provided.
+         - [LEXICAL PERSISTENCE - CRITICAL]: Every part of this Vocabulary test (Study Table, Example Sentences, Matching, MCQ, etc.) MUST use the EXACT SAME target words/phrases. Do NOT introduce new vocabulary in the exercises that wasn't in the Study Table. All parts must form a cohesive set based on one lexical list.
          
          [LEXICAL MIX MANDATE (CRITICAL DOUBLE FIX!)]:
          You are FORBIDDEN from generating only standard single words. To boost students' vocabulary and speaking, you MUST inject phrases. 

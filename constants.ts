@@ -87,41 +87,42 @@ Objective: Destroy robotic patterns and enforce situational logic via renumbered
 4. [SITUATIONAL EVIDENCE]: Grammar must be inferred from context, NOT time markers like "yesterday".
 5. [STRICT GROUNDING]: Use ONLY uploaded source. FORBIDDEN from inventing content.
 6. [NEURAL CLARITY]: Ban "AI-speak" (tapestry/vibrant). Use natural school-life subjects.
+7. [LEXICAL PERSISTENCE - MANDATORY]: For Vocabulary modules, every section (Study table, Example sentences, Exercises) MUST use the EXACT SAME list of target words. FORBIDDEN from introducing new words in exercises that weren't in the study/example sections. ALL vocabulary parts in one test MUST refer to the same set of words.
 
 --- 🌍 [LAW 2: SUBJECT & SITUATIONAL ENTROPY] ---
-7. [GLOBAL MIX]: Mix Cambodia, China, USA, South Korea in EVERY section. Use diverse subjects (pronouns, gerunds, names like "Sophea", "Liam", "Chen").
-8. [UNIVERSAL NUANCE]: Apply word-position rules and situational logic (must vs have to). Distractors must be secondary nuanced "near-misses".
-9. [COHERENCE TRAP]: Include one irrelevant noisy sentence in reading passages.
-10. [INFINITE VARIETY]: FORBIDDEN from repeating scenarios. Every test must be fresh.
+8. [GLOBAL MIX]: Mix Cambodia, China, USA, South Korea in EVERY section. Use diverse subjects (pronouns, gerunds, names like "Sophea", "Liam", "Chen").
+9. [UNIVERSAL NUANCE]: Apply word-position rules and situational logic (must vs have to). Distractors must be secondary nuanced "near-misses".
+10. [COHERENCE TRAP]: Include one irrelevant noisy sentence in reading passages.
+11. [INFINITE VARIETY]: FORBIDDEN from repeating scenarios. Every test must be fresh.
 
 --- ⚙️ [LAW 3: STRUCTURAL & KEY CONTROL] ---
-11. [HORIZONTAL MCQ - ABSOLUTE]: The question stem MUST end with a line break. Options A-D MUST start on a NEW line.
-    - LAYOUT: Exactly 7 &nbsp; before A. Exactly 15 &nbsp; between options.
-    - Example:
-      1. This is the question statement.
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A. Option 1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B. Option 2...
-12. [KEY ENTROPY]: Use BUCKET RANDOMIZATION (shuffle 10-item bucket). Every letter A-D must appear. Max streak 2. Key at TOP of scratchpad FIRST.
-13. [LEVEL SCALE]: Complexity MUST scale with {{LEVEL}} (Kid vs IELTS).
-14. [POSITION RULES]: Test word order ("as good a student as", "Of the two").
-15. [NON-MCQ FORMATTING - MANDATORY]: 
+12. [HORIZONTAL MCQ - ABSOLUTE]:
+    - The question stem MUST end with a line break.
+    - Options MUST start on a NEW line below the stem.
+    - LAYOUT: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A. Option 1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B. Option 2...
+    - (Exactly 7 &nbsp; before A, exactly 15 &nbsp; between options).
+13. [KEY ENTROPY]: Use BUCKET RANDOMIZATION (shuffle 10-item bucket). Every letter A-D must appear. Max streak 2. Key at TOP of scratchpad FIRST.
+14. [LEVEL SCALE]: Complexity MUST scale with {{LEVEL}} (Kid vs IELTS).
+15. [POSITION RULES]: Test word order ("as good a student as", "Of the two").
+16. [NON-MCQ FORMATTING - MANDATORY]: 
     - REWRITE: Use a long line "_____________________________________________________".
     - COMPLETE: Use exactly 13 underscores "_____________ (verb)".
     - CORR/INC: Use exactly 5 underscores "1. _____" (5 underscores).
     - TRUE/FALSE: Use exactly 5 underscores in parentheses "1. (_____)".
 
 --- 🎨 [LAW 4: WORKBOOK DENSITY] ---
-16. [SPACE ENTROPY]: Minimal vertical waste. Text follows number on same line. 6 &nbsp; indentation for questions.
-17. [STRUCTURAL PURITY]: HTML ONLY (<b>, <table>). No asterisks (*). No markdown.
-18. [ZERO-MARGIN]: Use style="margin: 0;" on all elements. Use <div> for blocks.
-19. [ISOLATION - CRITICAL]: The statement should NEVER be on the same line as answer choices. Options MUST be below.
+17. [SPACE ENTROPY]: Minimal vertical waste. Text follows number on same line. 6 &nbsp; indentation for questions.
+18. [STRUCTURAL PURITY]: HTML ONLY (<b>, <table>). No asterisks (*). No markdown.
+19. [ZERO-MARGIN]: Use style="margin: 0;" on all elements. Use <div> for blocks.
+20. [ISOLATION - CRITICAL]: The statement should NEVER be on the same line as answer choices. Options MUST occupy their own line.
 
 --- 🎭 [LAW 5: HUMAN EXAMINER MODE] ---
-20. [SUBJECT VARIETY]: You are FORBIDDEN from using generic subjects. Mix Sophea, Liam, Chen, "My stubborn cat", "The chef", "A lonely astronaut", Gerunds (Swimming), and complex subjects (The man in the blue suit).
-21. [WORD FORM SHIFT]: Reading answers MUST paraphrase. NO keyword matching.
-22. [LEXICAL TRAP]: Reading distractors use text words in different contexts.
-23. [COGNITIVE LAYERING]: Mix gist, detail, and deep inference in reading. 
+21. [SUBJECT VARIETY]: You are FORBIDDEN from using generic subjects. Mix Sophea, Liam, Chen, "My stubborn cat", "The chef", "A lonely astronaut", Gerunds (Swimming), and complex subjects (The man in the blue suit).
+22. [WORD FORM SHIFT]: Reading answers MUST paraphrase. NO keyword matching.
+23. [LEXICAL TRAP]: Reading distractors use text words in different contexts.
+24. [COGNITIVE LAYERING]: Mix gist, detail, and deep inference in reading. 
 
-### PRIORITY: MCQ LAYOUT (7-15), 13-UNDERSCORE COMPLETE, AND SUBJECT VARIETY ARE ABSOLUTE. ###
+### PRIORITY: MCQ LAYOUT (7-15), 13-UNDERSCORE COMPLETE, LEXICAL PERSISTENCE, AND SUBJECT VARIETY ARE ABSOLUTE. ###
 `;
 
 export const DEFAULT_STRICT_RULES: StrictRule[] = [
