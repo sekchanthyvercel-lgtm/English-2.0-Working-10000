@@ -142,14 +142,17 @@ const DEFAULT_SESSION: UserSession = {
   loginTime: Date.now()
 };
 
-const MASTER_PROTOCOLS_KEY = 'dp_master_v46';
-const STRICT_RULES_KEY = 'dp_rules_v46';
-const TEMPLATES_KEY = 'dp_templates_v46';
-const HISTORY_KEY = 'dp_history_v46';
-const BRAND_SETTINGS_KEY = 'dp_brand_v46';
-const USER_SESSION_KEY = 'dp_session_v46';
-const ENGINE_CONFIG_KEY = 'dp_engine_config_v46';
-const ONBOARDING_KEY = 'dp_onboarding_v1';
+const MASTER_PROTOCOLS_KEY = 'dp_master_v54';
+const STRICT_RULES_KEY = 'dp_rules_v54';
+const TEMPLATES_KEY = 'dp_templates_v53';
+const HISTORY_KEY = 'dp_history_v53';
+const BRAND_SETTINGS_KEY = 'dp_brand_v53';
+const USER_SESSION_KEY = 'dp_session_v59';
+const ENGINE_CONFIG_KEY = 'dp_engine_config_v60';
+const ONBOARDING_KEY = 'dp_onboarding_v60';
+const SELECTED_TEMPLATES_KEY = 'dp_selected_v60';
+const SELECTED_THEME_KEY = 'dp_theme_v59';
+const ACTIVE_MODULE_KEY = 'dp_module_v59';
 
 const StylePreview: React.FC<{ styleName?: string; typeId?: string; label?: string }> = ({ styleName, typeId, label }) => {
   const name = styleName || label || '';
@@ -941,7 +944,12 @@ function App() {
     }
   };
   const [isAssistantVisible, setIsAssistantVisible] = useState(false);
-  const [activeModule, setActiveModule] = useState<string>('Grammar');
+  const [activeModule, setActiveModule] = useState<string>(() => {
+    try {
+      const saved = localStorage.getItem(ACTIVE_MODULE_KEY);
+      return saved || 'Vocabulary';
+    } catch { return 'Vocabulary'; }
+  });
   const [activeLanguage, setActiveLanguage] = useState<string>('English');
   const [activeLevel, setActiveLevel] = useState<AcademicLevel>('Level 7');
   const [answerStrategy, setAnswerStrategy] = useState<AnswerStrategy>('GENERAL_MIXED');
@@ -963,7 +971,7 @@ function App() {
   const [starLineStyle, setStarLineStyle] = useState(0); // 0: Random, 1: Stars, 2: Flowers, 3: Hearts, 4: Mixed
   const [enablePages, setEnablePages] = useState(true);
   const [isPartBackgroundEnabled, setIsPartBackgroundEnabled] = useState(false);
-  const [isInstructionBackgroundEnabled, setIsInstructionBackgroundEnabled] = useState(false);
+  const [isInstructionBackgroundEnabled, setIsInstructionBackgroundEnabled] = useState(true);
   const [isColorfulBackgroundEnabled, setIsColorfulBackgroundEnabled] = useState(true);
   const [instructionCase, setInstructionCase] = useState<'uppercase' | 'lowercase' | 'random'>('uppercase');
   const [activeSubject, setActiveSubject] = useState<string>('cambodia');
@@ -976,7 +984,7 @@ function App() {
   const [isCountriesHidden, setIsCountriesHidden] = useState(false);
   const [customArchitectSubTab, setCustomArchitectSubTab] = useState<string>('All');
   const [paperDesign, setPaperDesign] = useState<number>(8); // Style 9: Modern Red
-  const [instructionHeaderStyle, setInstructionHeaderStyle] = useState<number>(6); // Style 6: Mix Styles (Default)
+  const [instructionHeaderStyle, setInstructionHeaderStyle] = useState<number>(0); // Style 0: Brutalist Pop (Default)
   const [defaultColumnCount, setDefaultColumnCount] = useState<number>(2); // 2 columns
   const [architectTab, setArchitectTab] = useState<'Grammar' | 'Vocabulary' | 'Reading' | 'Generals' | 'Custom'>('Grammar');
   const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({});
@@ -1069,7 +1077,7 @@ function App() {
     }
   }, [instructionRulerStyle]);
   const [mcqStyle, setMcqStyle] = useState<number>(0); 
-  const [mcqOptionStyle, setMcqOptionStyle] = useState<'Standard' | 'Boxed' | 'Minimalist' | 'Elegant' | 'Brutalist' | 'None' | 'Round' | 'Square' | 'Brackets' | 'Double' | 'Double Circle' | 'Dotted Circle' | 'Thick Circle' | 'Round 2' | 'Round 3' | 'Round 4' | 'Star'>('Standard');
+  const [mcqOptionStyle, setMcqOptionStyle] = useState<'Standard' | 'Boxed' | 'Minimalist' | 'Elegant' | 'Brutalist' | 'None' | 'Round' | 'Square' | 'Brackets' | 'Double' | 'Double Circle' | 'Dotted Circle' | 'Thick Circle' | 'Round 2' | 'Round 3' | 'Round 4' | 'Star'>('Brutalist');
   const [tableDesignStyle, setTableDesignStyle] = useState<number>(0); // Table Design Style
   const [isColorExportEnabled, setIsColorExportEnabled] = useState<boolean>(false);
   const [instructionStyle, setInstructionStyle] = useState<number>(0); // Default
@@ -1266,8 +1274,8 @@ function App() {
   const [activeThemeId, setActiveThemeId] = useState<string>(() => {
     try {
       const saved = localStorage.getItem('dp_theme_v30');
-      return saved || 'brutalist-pop';
-    } catch { return 'brutalist-pop'; }
+      return saved || 'default';
+    } catch { return 'default'; }
   });
 
   const [activeEngine, setActiveEngine] = useState<NeuralEngine>(() => {
@@ -1415,12 +1423,11 @@ function App() {
       
       // Force update all fields from INITIAL_TEMPLATES for existing IDs
       const updated = parsed.map((t: any) => {
-        if (t.isCustomized) return t;
         const fresh = INITIAL_TEMPLATES.find(f => f.id === t.id);
         if (fresh) {
           return {
             ...t,
-            ...fresh
+            category: fresh.category // Always fix category to prevent leaking
           };
         }
         return t;
@@ -1433,30 +1440,52 @@ function App() {
     } catch { return INITIAL_TEMPLATES; }
   });
 
-  const [selectedInstructionIds, setSelectedInstructionIds] = useState<string[]>(['g_circle', 'g_correct_incorrect', 'g_complete_sentences', 'g_complete_story', 'mcq_standard', 'g_pair']);
-  const [columnOverrides, setColumnOverrides] = useState<Record<string, number>>({
-    'g_circle': 2,
-    'g_correct_incorrect': 2,
-    'g_complete_sentences': 1,
-    'g_complete_story': 1,
-    'mcq_standard': 1,
-    'g_pair': 1
+  const [selectedInstructionIds, setSelectedInstructionIds] = useState<string[]>(() => {
+    // Standard defaults as requested by the user from screenshots
+    const defaults = [
+      // VOCABULARY
+      'v_study_table_elite', 'v_study_example_elite', 'v_supply_terms_elite', 'v_matching_elite', 'v_mcq_elite', 'v_tf_vocab_elite', 'v_vocab_box_elite',
+      // READING
+      'r_tf_stmt_elite', 'r_mcq_elite', 'r_short_answer_elite', 'r_inferential_elite', 'r_critical_thinking_elite', 'r_summary_elite',
+      // GRAMMAR
+      'g_correct_incorrect_elite', 'g_circle_elite', 'g_complete_sentences_elite', 'g_mcq_elite', 'g_double_mcq_elite', 'g_write_correct_form_elite'
+    ];
+    try {
+      const saved = localStorage.getItem(SELECTED_TEMPLATES_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        return Array.isArray(parsed) && parsed.length > 0 ? parsed : defaults;
+      }
+      return defaults;
+    } catch { return defaults; }
   });
-  const [itemCountOverrides, setItemCountOverrides] = useState<Record<string, number>>({
-    'g_circle': 20,
-    'g_correct_incorrect': 20,
-    'g_complete_sentences': 10,
-    'g_complete_story': 10,
-    'mcq_standard': 10,
-    'g_pair': 10,
-    'v_study_table_v2': 15,
-    'v_sentence_study': 15,
-    'v_mcq_standard': 15,
-    'v_matching_pro': 15,
-    'v_box': 15,
-    'v_speaking_std': 10,
-    'v_copy_no_answers': 10,
-    'v_synonyms_exercises': 10
+  const [columnOverrides, setColumnOverrides] = useState<Record<string, number>>(() => {
+    const defaults: Record<string, number> = {
+      'v_study_table_elite': 2,
+      'g_correct_incorrect_elite': 2,
+      'v_study_example_elite': 2,
+      'v_tf_vocab_elite': 2,
+    };
+    try {
+      const saved = localStorage.getItem('dp_column_overrides_v59');
+      if (saved) return JSON.parse(saved);
+      return defaults;
+    } catch { return defaults; }
+  });
+  const [itemCountOverrides, setItemCountOverrides] = useState<Record<string, number>>(() => {
+    const defaults: Record<string, number> = {
+      // VOCABULARY
+      'v_study_table_elite': 15, 'v_study_example_elite': 10, 'v_supply_terms_elite': 15, 'v_matching_elite': 20, 'v_mcq_elite': 10, 'v_tf_vocab_elite': 10, 'v_vocab_box_elite': 10, 'v_speaking_elite': 10,
+      // GRAMMAR
+      'g_correct_incorrect_elite': 20, 'g_circle_elite': 10, 'g_complete_sentences_elite': 10, 'g_mcq_elite': 10, 'g_double_mcq_elite': 10, 'g_write_correct_form_elite': 10,
+      // READING
+      'r_tf_stmt_elite': 10, 'r_mcq_elite': 10, 'r_short_answer_elite': 10, 'r_inferential_elite': 10, 'r_critical_thinking_elite': 10, 'r_summary_elite': 10,
+    };
+    try {
+      const saved = localStorage.getItem('dp_item_overrides_v59');
+      if (saved) return JSON.parse(saved);
+      return defaults;
+    } catch { return defaults; }
   });
   
   const [sourceMaterial, setSourceMaterial] = useState<QuickSource | null>(null);
@@ -1510,7 +1539,38 @@ function App() {
   }, [paperDesign]);
 
   useEffect(() => {
-    // Rotation disabled
+    localStorage.setItem(SELECTED_TEMPLATES_KEY, JSON.stringify(selectedInstructionIds));
+  }, [selectedInstructionIds]);
+
+  useEffect(() => {
+    localStorage.setItem('dp_column_overrides_v59', JSON.stringify(columnOverrides));
+  }, [columnOverrides]);
+
+  useEffect(() => {
+    localStorage.setItem('dp_item_overrides_v59', JSON.stringify(itemCountOverrides));
+  }, [itemCountOverrides]);
+
+  useEffect(() => {
+    localStorage.setItem(TEMPLATES_KEY, JSON.stringify(instructionTemplates));
+  }, [instructionTemplates]);
+
+  useEffect(() => {
+    localStorage.setItem(ACTIVE_MODULE_KEY, activeModule);
+  }, [activeModule]);
+
+  useEffect(() => {
+    setInstructionTemplates(prev => {
+      let changed = false;
+      const next = prev.map(t => {
+        const defaultTemp = INITIAL_TEMPLATES.find(dt => dt.id === t.id);
+        if (defaultTemp && t.category !== defaultTemp.category && !t.id.toString().startsWith('custom-')) {
+          changed = true;
+          return { ...t, category: defaultTemp.category };
+        }
+        return t;
+      });
+      return changed ? next : prev;
+    });
   }, []);
 
   const cyclePriority = (current: Priority): Priority => {
@@ -1530,27 +1590,9 @@ function App() {
 
   const toggleInstruction = (id: string) => {
     setSelectedInstructionIds(prev => {
-      const template = instructionTemplates.find(t => t.id === id);
-      if (!template) return prev;
-
       if (prev.includes(id)) {
         return prev.filter(i => i !== id);
       }
-      
-      const typeIdToReplace = template.typeId || template.id;
-      
-      // Find other instruction with same typeId/id and category
-      const otherWithSameType = instructionTemplates.find(t => 
-        prev.includes(t.id) && 
-        (t.typeId === template.typeId || t.id === template.id) &&
-        t.category === template.category
-      );
-      
-      if (otherWithSameType) {
-        // Replacement mode
-        return prev.map(i => i === otherWithSameType.id ? id : i);
-      }
-      
       return [...prev, id];
     });
   };
@@ -1757,7 +1799,7 @@ ${customHtml}
                 paperStyles.mcq === 3 ? "Circled letters with random colors. MANDATORY: Wrap each letter (A, B, C, D) in a span with a random, distinct background color (e.g., <span style=\"background-color: #ff9999; color: black; border-radius: 50%; padding: 4px 8px; display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; font-weight: bold;\">A</span>). Use different colors for A, B, C, and D. Ensure text is clearly visible and centered." : 
                 "Custom layout style " + (typeof paperStyles.mcq === 'number' ? paperStyles.mcq + 1 : paperStyles.mcq))}
 - MCQ Spacing: ${mcqSpacing === 'none' ? "No extra vertical space between questions." : "Add exactly ONE empty line (Enter) between each question for better spacing."}
-- True/False Style: ${getStyleInstruction('tf', paperStyles.tf, paperStyles.tf === 0 ? 'Put "( T / F )" at the BEGINNING (e.g., "( T / F ) 1. The cat is big.").' : 
+- True/False Style: ${getStyleInstruction('tf', paperStyles.tf, paperStyles.tf === 0 ? 'Style: "1. (_____)" (Parentheses with exactly 5 underscores).' : 
                       paperStyles.tf === 1 ? 'Put "( T / F )" at the END (e.g., "1. The cat is big. ( T / F )").' :
                       paperStyles.tf === 2 ? 'Put "_____" at the beginning (e.g., "_____ 1. The cat is big.").' :
                       paperStyles.tf === 3 ? 'Put "(____)" at the beginning (e.g., "(____) 1. The cat is big.").' :
@@ -1765,7 +1807,7 @@ ${customHtml}
                       paperStyles.tf === 5 ? 'Put "[ T / F ]" at the end (e.g., "1. The cat is big. [ T / F ]").' :
                       paperStyles.tf === 6 ? 'Put "(____) (" at the beginning and ")" at the end of the sentence (e.g., "(____) (1. The cat is big.)").' :
                       "Custom T/F style " + (typeof paperStyles.tf === 'number' ? paperStyles.tf + 1 : paperStyles.tf))}
-- Correct/Incorrect Style: ${getStyleInstruction('correctIncorrect', paperStyles.correctIncorrect, paperStyles.correctIncorrect === 0 ? 'Put "( C / I )" at the BEGINNING (e.g., "( C / I ) 1. She go to school.").' : 
+- Correct/Incorrect Style: ${getStyleInstruction('correctIncorrect', paperStyles.correctIncorrect, paperStyles.correctIncorrect === 0 ? 'Style: "1. _____" (Exactly 5 underscores).' : 
                              paperStyles.correctIncorrect === 1 ? 'Put "( C / I )" at the END (e.g., "1. She go to school. ( C / I )").' :
                              paperStyles.correctIncorrect === 2 ? 'Put "_____" at the beginning (e.g., "_____ 1. She go to school.").' :
                              paperStyles.correctIncorrect === 3 ? 'Put "(____)" at the beginning (e.g., "(____) 1. She go to school.").' :
@@ -1785,13 +1827,13 @@ ${customHtml}
 - Vocabulary Alignment: MANDATORY: For ALL vocabulary-related exercises (Study Table, Match, etc.), you MUST use exactly 1 table with 2 columns. Column 1 width: 40%. Column 2 width: 60%. Add padding-left: 30px to Column 2 so the definition is clearly separated. All content must start with consistent indentation. For Matching items (1-10), use unique sequential letters (A, B, C, D, E, F, G, H, I, J) for the matching column. DO NOT reuse letters like 'A', 'B' multiple times in one part. Every item MUST have a unique letter.
 - Vocabulary Introduction: Always include a clear introduction sentence before the vocabulary list (e.g., "PART A: Study the following vocabulary words and their corresponding definitions.").
 - Global Indentation: For ALL question types, ensure the question numbers (1., 2., 3.) are perfectly aligned vertically. Use a table structure if necessary to ensure the text starts at the same horizontal position.
-- Instruction Clarity: Ensure all "PART X: ..." headers and instruction sentences are perfectly clear and visible. Use dark text for light backgrounds and light text for dark backgrounds. ${isInstructionBackgroundEnabled ? 'Apply a light background color (e.g., background: #f1f5f9) to the instruction header row.' : 'MANDATORY: DO NOT use any background colors or shading for instructions.'}
+- Instruction Clarity: Ensure all "PART X: ..." headers and instruction sentences are perfectly clear. ${isInstructionBackgroundEnabled ? 'Apply a distinct background color (e.g., background: #fef08a or similar soft colors) EXCLUSIVELY to the instruction header element itself, using an inline style block like `<div style="background-color: #fca5a5; padding: 8px; border: 2px solid black; margin-bottom: 10px;">`. CRITICAL: The exercise questions, items, and tables MUST be strictly OUTSIDE of this background div. NEVER wrap the whole section in a colored div.' : 'MANDATORY: DO NOT use any background colors or shading for instructions.'}
 - Circle Style: ${getStyleInstruction('circle', paperStyles.circle, paperStyles.circle === 0 ? "Standard bold text to circle." : 
                   paperStyles.circle === 1 ? "Underlined text to circle." :
                   paperStyles.circle === 2 ? "Italicized text to circle." :
                   "Custom Circle style " + (typeof paperStyles.circle === 'number' ? paperStyles.circle + 1 : paperStyles.circle))}
-- Sentence Completion Style: ${getStyleInstruction('sentenceCompletion', paperStyles.sentenceCompletion, paperStyles.sentenceCompletion === 0 ? "Standard blank line at the end (e.g., 1. The cat is ____.)." : 
-                                 paperStyles.sentenceCompletion === 1 ? "Blank line with base word in parentheses (e.g., 1. The cat is ____ (sleep).)." :
+- Sentence Completion Style: ${getStyleInstruction('sentenceCompletion', paperStyles.sentenceCompletion, paperStyles.sentenceCompletion === 0 ? 'Standard blank line at the end (e.g., 1. The cat is ____.).' : 
+                                 paperStyles.sentenceCompletion === 1 ? 'Use exactly 13 underscores: "_____________ (verb)".' :
                                  "Custom Sentence Completion style " + (typeof paperStyles.sentenceCompletion === 'number' ? paperStyles.sentenceCompletion + 1 : paperStyles.sentenceCompletion))}
 - Word Box Style: ${getStyleInstruction('wordBox', paperStyles.wordBox, paperStyles.wordBox === 0 ? "Standard comma-separated list in a box." : 
                    paperStyles.wordBox === 1 ? "Bulleted list in a box." :
@@ -1816,55 +1858,44 @@ ${customHtml}
 - Double MCQ Style: ${getStyleInstruction('doubleMcq', paperStyles.doubleMcq, "Standard double-gap MCQ with 4 options per item.")}
 `;
 
-    if (selectedInstructionIds.length === 0) { 
-      console.warn("⚠️ No components selected.");
-      alert("Please select at least one component (e.g., MCQ, True/False) from the list below."); 
+    let finalSelectedIds = selectedInstructionIds.filter(id => {
+      const template = instructionTemplates.find(t => t.id === id);
+      return template && template.category?.toUpperCase() === activeModule.toUpperCase();
+    });
+    const orderMap: Record<string, number> = {
+      // Vocabulary
+      'v_study_table_elite': 1, 'v_study_example_elite': 2, 'v_supply_terms_elite': 3, 'v_matching_elite': 4, 'v_mcq_elite': 5, 'v_tf_vocab_elite': 6, 'v_vocab_box_elite': 7, 'v_speaking_elite': 8,
+      // Reading
+      'r_tf_stmt_elite': 1, 'r_mcq_elite': 2, 'r_short_answer_elite': 3, 'r_inferential_elite': 4, 'r_critical_thinking_elite': 5,
+      // Grammar
+      'g_mcq_elite': 1, 'g_correct_incorrect_elite': 2, 'g_circle_elite': 3, 'g_complete_sentences_elite': 4, 'g_double_mcq_elite': 5, 'g_write_correct_form_elite': 6, 'g_rewrite_sentences_elite': 7,
+      
+      // Legacy Vocabulary Fallbacks
+      'v_study_list_one_column': 1, 'v_study_table': 1, 'v_study_table_v2': 1, 'v_study_clean_no_divider': 1, 'v_zebra_table': 1, 'v_boxed_pairs': 1,
+      'v_sentence_study': 2, 'v_sentences': 2, 'v_mcq': 3, 'v_matching': 4, 'v_match': 4, 'v_matching_idiom': 4, 'v_draw_line_divided': 4, 'v_matching_pro': 4,
+      'v_key_term': 5, 'v_key_term_clean': 5, 'v_key_term_divider': 5, 'v_key_term_list_one_column': 5, 'v_supply_terms': 5,
+      'v_writing_definition_1': 5, 'v_writing_definition_2': 5, 'v_writing_definition_3': 5, 'v_speaking': 100
+    };
+    
+    finalSelectedIds.sort((a, b) => {
+      const orderA = orderMap[a] || 50;
+      const orderB = orderMap[b] || 50;
+      return orderA - orderB;
+    });
+
+    const selectedTemps = instructionTemplates
+      .filter(t => finalSelectedIds.includes(t.id) && t.category?.toUpperCase() === activeModule.toUpperCase())
+      .sort((a, b) => finalSelectedIds.indexOf(a.id) - finalSelectedIds.indexOf(b.id));
+
+    if (selectedTemps.length === 0) {
+      console.warn("⚠️ No components selected for this module.");
+      alert(`Please select at least one component for ${activeModule} from the list below.`); 
       return; 
     }
-    
+
     setIsGenerating(true);
     setGenerationError(null);
     setGenerationStep('Initializing Neural Core...');
-    
-    // Sort selected instruction IDs for Vocabulary module
-    let finalSelectedIds = [...selectedInstructionIds];
-    if (activeModule === 'Vocabulary') {
-      const vocabOrderMap: Record<string, number> = {
-        'v_study_list_one_column': 1,
-        'v_study_table': 1,
-        'v_study_table_v2': 1,
-        'v_study_clean_no_divider': 1,
-        'v_zebra_table': 1,
-        'v_boxed_pairs': 1,
-        'v_sentence_study': 2,
-        'v_sentences': 2,
-        'v_mcq': 3,
-        'v_matching': 4,
-        'v_match': 4,
-        'v_matching_idiom': 4,
-        'v_draw_line_divided': 4,
-        'v_matching_pro': 4,
-        'v_key_term': 5,
-        'v_key_term_clean': 5,
-        'v_key_term_divider': 5,
-        'v_key_term_list_one_column': 5,
-        'v_supply_terms': 5,
-        'v_writing_definition_1': 5,
-        'v_writing_definition_2': 5,
-        'v_writing_definition_3': 5,
-        'v_speaking': 100 // Discussion at the end
-      };
-      
-      finalSelectedIds.sort((a, b) => {
-        const orderA = vocabOrderMap[a] || 50;
-        const orderB = vocabOrderMap[b] || 50;
-        return orderA - orderB;
-      });
-    }
-
-    const selectedTemps = instructionTemplates
-      .filter(t => finalSelectedIds.includes(t.id))
-      .sort((a, b) => finalSelectedIds.indexOf(a.id) - finalSelectedIds.indexOf(b.id));
 
     // Filter Master Protocols and Strict Rules by category
     const filterByCategory = (rules: StrictRule[]) => 
@@ -1911,8 +1942,10 @@ ${customHtml}
 
     let instructionBackgroundInstruction = '';
     if (isInstructionBackgroundEnabled) {
-      instructionBackgroundInstruction = `\n[INSTRUCTION HEADER STYLE - MANDATORY]: Every part header (e.g. PART A: ...) MUST be wrapped in a styling tag (like <div> or <span>) with EXACTLY this style: "${selStyle.prompt}". DO NOT use any other styles for the instruction header. 
-      [SUBTLE ROTATION]: If you generate more than 3 parts, you may slightly vary the color of the background using other soft tones if the style allows, but you MUST respect the structural theme of the selected style: "${selStyle.name}".`;
+      instructionBackgroundInstruction = `\n[INSTRUCTION HEADER STYLE - MANDATORY]: You MUST combine the Part Label (e.g. PART A) and the exercise instruction into ONE single styling block. 
+      E.g. <div style="${selStyle.prompt}">PART A: CHOOSE THE BEST OPTION.</div>
+      CRITICAL: DO NOT generate a separate plain text header or Part title. Generate ONLY ONE styled header per part.
+      [CRITICAL ISOLATION]: You MUST close the styling tag immediately after the text. The exercise questions, options, and tables MUST be strictly OUTSIDE of this styling tag.`;
     } else {
       instructionBackgroundInstruction = `\n[STRICT NO-COLOR MODE]: You are strictly forbidden from applying any background-color, shading, or highlight to the instruction header, intros, or any other part titles. EVERYTHING MUST BE TRANSPARENT (background-color: transparent !important;). Text color MUST be black (#000000). THIS IS A PRINTER-FRIENDLY NO-COLOR TEST.
       - ALSO: Ensure NO colored backgrounds for any introduction text or titles.
@@ -1933,14 +1966,11 @@ ${customHtml}
     [TONE_DOWN_LANDMARKS]: Do NOT use landmarks from the PLACES list in every sentence. Focus on standard everyday life activities (e.g., "Park Ji-hoon is buying milk", "Sarah is at the library") with unique names. Use the PLACES list sparingly.
     [SUBJECT_DIVERSITY]: NEVER use the same subject name more than once in the entire test. Every sentence must have a unique subject.`;
 
-    let vocabOrderInstruction = '';
-    if (activeModule === 'Vocabulary') {
-      vocabOrderInstruction = `\n[VOCABULARY ORDERING - ABSOLUTE MANDATORY]:
-      1. PART A MUST BE: Study Vocabulary with definition (Vertical Divider Study / Study Table).
-      2. PART B MUST BE: Study examples (Sentence Study style).
-      3. ALL SPEAKING / DISCUSSION parts MUST ALWAYS be placed at the very end of the practice.
-      4. REORDER ALL SELECTED VOCABULARY EXERCISES TO MATCH THIS SEQUENCE REGARDLESS OF THE SELECTION ORDER.`;
-    }
+    let vocabOrderInstruction = `\n[EXERCISE ORDERING - ABSOLUTE MANDATORY]:
+    1. PART A MUST BE: Study Table.
+    2. PART B MUST BE: Study Example.
+    3. ALL SPEAKING / DISCUSSION parts MUST ALWAYS be placed at the very end of the practice.
+    4. REORDER ALL EXERCISES TO MATCH THE SEQUENCE SPECIFIED REGARDLESS OF THE INPUT SELECTION ORDER.`;
 
     const caseInstruction = instructionCase === 'uppercase' 
       ? "CRITICAL: EVERY SINGLE instruction header for ALL parts (Grammar, Vocabulary, Reading) MUST be in ALL CAPS (UPPERCASE) without exception (e.g., 'PART A: CHOOSE THE APPROPRIATE OPTIONS...'). HOWEVER, READING PASSAGES, exercises, and questions MUST ALWAYS use normal sentence case. NEVER capitalize the whole text of a reading passage."
@@ -1960,15 +1990,15 @@ ${customHtml}
 
     const generationIntegrityInstruction = `
 [GENERATION INTEGRITY - CRITICAL]:
-1. STRICT PART LIMIT: You are strictly AUTHORIZED to generate ONLY the ${selectedInstructionIds.length} parts listed below. Use EXACTLY ${selectedInstructionIds.length} parts.
+1. STRICT PART LIMIT: You are strictly AUTHORIZED to generate ONLY the ${selectedTemps.length} parts listed below. Use EXACTLY ${selectedTemps.length} parts.
 2. PART LABELING & SEQUENCE: Parts MUST be labeled sequentially as PART A, PART B, PART C, etc. in the order they appear. The Teacher Answer Key MUST use these EXACT labels (PART A, PART B...).
 3. ALL SELECTED TYPES: You MUST generate content for EVERY SINGLE exercise type selected.
-4. READING PASSAGE LOGIC & PLACEMENT:
+${activeModule === 'Reading' ? `4. READING PASSAGE LOGIC & PLACEMENT:
    ${isSingleReadingText 
      ? "- [ONE READING FOR ALL]: Generate ONLY ONE reading passage. Place it STRICTLY INSIDE ROW 2 of the HTML table for PART A (as specified in the formatting instructions). CRITICAL: DO NOT DUPLICATE the instruction header. There must only be ONE 'PART A:' header." 
      : "- [UNIQUE READING PASSAGES]: For each Reading-related part, generate a COMPLETELY UNIQUE reading passage. Each passage MUST be placed STRICTLY INSIDE ROW 2 of the HTML table for that part. CRITICAL: DO NOT DUPLICATE the instruction headers."
    }
-   - [CASE RULE]: Reading passages MUST use normal sentence case. NEVER capitalize the entire text.
+   - [CASE RULE]: Reading passages MUST use normal sentence case. NEVER capitalize the entire text.` : ''}
 5. INSTRUCTION CASING: EVERY SINGLE instruction header (e.g., "PART A:", "PART B:") MUST strictly follow the casing requested: ${instructionCase}.
 6. MCQ LAYOUT (SAME LINE): If an MCQ has short options (1-3 words), you MUST place them on the SAME LINE as the question if possible, or in a compact horizontal row immediately below. Use 8 non-breaking spaces between options.
 7. [SCRAMBLE_MANDATORY]: All exercises (Matching, MCQ, Word Box) MUST be scrambled. Matching definitions MUST NOT match the row index of their terms. Answer choices (A, B, C, D) must not follow a predictable pattern.
@@ -2189,7 +2219,7 @@ ${customHtml}
         ${paperStyles.correctIncorrect === 0 ? 'a. Checkbox at start: "<span class="checkbox-box"></span> 1. Sentence with error."' :
           paperStyles.correctIncorrect === 1 ? 'b. ( C / I ) at the end: "1. Sentence with error. ( C / I )"' :
           'c. "Correct / Incorrect" labels at the end.'}
-    - For "Sentence Rewrite", provide the original sentence, then a blank line below it for the student to write the new version.
+    - For "Sentence Rewrite", provide the original sentence, then a long line "_____________________________________________________" below it for the student output.
     - Make the designs look interesting and varied, like a high-quality printed textbook.
     - Ensure all tables have the class "professional-table" for consistent styling.`;
 
@@ -2250,7 +2280,7 @@ ${customHtml}
       const isForcedList = overrideCol === 0 && defaultColumnCount === 1 && ![2, 3, 4].includes(baseLayout) && !isVocabStudyTable;
       
       const isReadingComponent = t.category === 'READING' || activeModule === 'Reading';
-      const needsReadingRow = (isReadingComponent && !isSingleReadingText) || (isSingleReadingText && idx === 0);
+      const needsReadingRow = activeModule === 'Reading' && ((isReadingComponent && !isSingleReadingText) || (isSingleReadingText && idx === 0));
       const readingRowInstruction = needsReadingRow
         ? `\n            - Row 2 (CRITICAL): A single <td> spanning all columns (colspan="${effectiveCols}") containing the FULL READING PASSAGE. NEVER put the passage outside the table.` 
         : '';
@@ -2390,9 +2420,24 @@ ${customHtml}
         formatInstruction = `(FORMAT: Standard numbered list. ${isPartBackgroundEnabled ? 'MANDATORY: Wrap the entire part in a <div class="..."> with a unique background style class from the PART BACKGROUND PROTOCOL.' : ''} Every numbered item (1., 2., 3., etc.) MUST start on a NEW LINE using an HTML <p> or <br> tag. DO NOT bunch them together in a single paragraph. DO NOT use tables or columns.)`;
       }
         
-      const formattedPrompt = instructionCase === 'uppercase' ? t.prompt.toUpperCase() : t.prompt;
+      // Only format the visible header according to instructionCase. Do NOT format the internal prompt!
+      const formattedPrompt = t.prompt;
         
-      return `[SECTION START - ${String.fromCharCode(65 + idx)}]: (DO NOT PRINT "SECTION ${String.fromCharCode(65 + idx)}") [MANDATORY HEADER - YOU MUST USE THIS EXACT TEXT ONLY ONCE: "<b>${formattedHeader}</b>"]: <b>${formattedPrompt.replace(/{{BLANK}}/g, selectedBlankStyle)}</b> (GENERATE EXACTLY ${overrideItems} ITEMS) ${blueprintStr} ${formatInstruction} ${paperStylesInstruction} ${tableStyleInstruction} ${rulerInstruction} ${instructionVisualPrompt} ${answerKeyProtocol} [CLEAN HEADER PROTOCOL]: Place the mandatory header ONLY ONCE. If the formatting instruction above (Row 1) specifies putting the header inside a table row, YOU MUST NOT print the header again outside the table. DO NOT PRINT THE TITLE TWICE. Avoid double headers at all costs.`;
+      return `[SECTION START - ${String.fromCharCode(65 + idx)}]: (DO NOT PRINT "SECTION ${String.fromCharCode(65 + idx)}")
+[MANDATORY SECTION HEADER]: You MUST output this exact text as the visible title for this part: ${formattedHeader}
+
+[LLM INTERNAL RULES - DO NOT PRINT THESE]:
+${formattedPrompt.replace(/{{BLANK}}/g, selectedBlankStyle)}
+(GENERATE EXACTLY ${overrideItems} ITEMS)
+${blueprintStr}
+${formatInstruction}
+${paperStylesInstruction}
+${tableStyleInstruction}
+${rulerInstruction}
+${instructionVisualPrompt}
+${answerKeyProtocol}
+
+[CLEAN HEADER PROTOCOL]: Place the mandatory header ONLY ONCE. If the formatting instruction above (Row 1) specifies putting the header inside a table row, YOU MUST NOT print the header again outside the table. DO NOT PRINT THE TITLE TWICE. Avoid double headers at all costs.`;
     }).join('\n\n');
 
     const moduleSafetyGuard = activeModule === 'Grammar'
@@ -2450,7 +2495,7 @@ ${customHtml}
       : '';
 
     const mandatorySequence = (activeModule === 'Grammar' 
-      ? `1. GENERATE EXACTLY AND ONLY THE ${selectedInstructionIds.length} REQUESTED PARTS LISTED BELOW. 
+      ? `1. GENERATE EXACTLY AND ONLY THE ${selectedTemps.length} REQUESTED PARTS LISTED BELOW. 
 2. [TOPIC DISTRIBUTION]: Focus 100% on "${topic || fallbackTopic}". Distribute nuances of this topic across the requested parts.
 3. [STRICT LIMIT]: DO NOT ADD ANY ADDITIONAL SECTIONS, INTROS, OR OUTROS.
 4. [MODULE FIREWALL]: You are strictly FORBIDDEN from generating Reading passages (unless a Reading template is selected) or Vocabulary definitions. Focus only on Grammar structural accuracy.
@@ -2458,14 +2503,14 @@ ${customHtml}
 ${componentList}
 6. [COMPLETENESS]: You MUST generate every part in the list above. Number each starting from 1.`
       : activeModule === 'Reading'
-      ? `1. GENERATE EXACTLY AND ONLY THE ${selectedInstructionIds.length} REQUESTED PARTS LISTED BELOW.
+      ? `1. GENERATE EXACTLY AND ONLY THE ${selectedTemps.length} REQUESTED PARTS LISTED BELOW.
 2. ${readingPassageInstruction}
 3. [STRICT LIMIT]: DO NOT ADD EXTRA PARTS. 
 4. [MODULE FIREWALL]: Strictly forbidden from testing grammar mechanics. Focus on comprehension.
 5. [PART LIST]:
 ${componentList}
 6. [COMPLETENESS]: Every part listed above MUST be generated completely.`
-      : `1. GENERATE EXACTLY AND ONLY THE ${selectedInstructionIds.length} REQUESTED PARTS LISTED BELOW.
+      : `1. GENERATE EXACTLY AND ONLY THE ${selectedTemps.length} REQUESTED PARTS LISTED BELOW.
 2. [STRICT LIMIT]: DO NOT ADD EXTRA SECTIONS.
 3. [MODULE FIREWALL]: No grammar testing in vocabulary sections.
 4. [PART LIST]:
@@ -2515,7 +2560,7 @@ ${paperStylesInstruction}
 ${rulesPrompt}
 
 [SYSTEM OBJECTIVE]: Generate a COMPLETE assessment based on the requested components.
-[MANDATORY]: You MUST generate ALL ${selectedInstructionIds.length} requested parts. DO NOT skip any parts. DO NOT generate ANY additional parts beyond the ${selectedInstructionIds.length} requested. If you hit a length limit, prioritize completing all parts with fewer items rather than skipping entire parts or over-generating.
+[MANDATORY]: You MUST generate ALL ${selectedTemps.length} requested parts. DO NOT skip any parts. DO NOT generate ANY additional parts beyond the ${selectedTemps.length} requested. If you hit a length limit, prioritize completing all parts with fewer items rather than skipping entire parts or over-generating.
 [TARGET TOPIC]: "${topic || fallbackTopic}"
 [TARGET LEVEL]: ${activeLevel}
 [LANGUAGE]: ${activeLanguage}
@@ -2850,41 +2895,11 @@ ${componentLogic}
       
       // Set professional defaults based on module selection
       if (m === 'Reading') {
-        setSelectedInstructionIds(['r_critical_thinking', 'r_inferential', 'r_mcq', 'r_tf_stmt', 'r_summary_cloze']);
+        setSelectedInstructionIds(['r_tf_stmt_elite', 'r_mcq_elite', 'r_short_answer_elite', 'r_inferential_elite', 'r_critical_thinking_elite', 'r_summary_elite']);
       } else if (m === 'Vocabulary') {
-        setSelectedInstructionIds(['v_study_table_v2', 'v_sentence_study', 'v_mcq_standard', 'v_matching_pro', 'v_box', 'v_speaking_std', 'v_tf_v2']);
-        setItemCountOverrides(prev => ({
-          ...prev,
-          'v_study_table_v2': 15,
-          'v_sentence_study': 15,
-          'v_mcq_standard': 15,
-          'v_matching_pro': 15,
-          'v_box': 15,
-          'v_speaking_std': 10,
-          'v_tf_v2': 10
-        }));
+        setSelectedInstructionIds(['v_study_table_elite', 'v_matching_elite', 'v_mcq_elite', 'v_study_example_elite', 'v_supply_terms_elite', 'v_tf_vocab_elite', 'v_vocab_box_elite']);
       } else if (m === 'Grammar') {
-        setSelectedInstructionIds(['g_circle', 'g_correct_incorrect', 'g_complete_sentences', 'g_complete_story', 'mcq_standard', 'g_pair']);
-        setColumnOverrides(prev => ({
-          ...prev,
-          'g_circle': 2,
-          'g_correct_incorrect': 2,
-          'g_complete_sentences': 1,
-          'g_complete_story': 1,
-          'mcq_standard': 1,
-          'g_pair': 1
-        }));
-        setItemCountOverrides(prev => ({
-          ...prev,
-          'g_circle': 20,
-          'g_correct_incorrect': 20,
-          'g_complete_sentences': 10,
-          'g_complete_story': 10,
-          'mcq_standard': 10,
-          'g_pair': 10
-        }));
-      } else {
-        setSelectedInstructionIds([]);
+        setSelectedInstructionIds(['g_correct_incorrect_elite', 'g_circle_elite', 'g_complete_sentences_elite', 'g_mcq_elite', 'g_double_mcq_elite', 'g_write_correct_form_elite']);
       }
     }
   };
@@ -2913,8 +2928,10 @@ ${componentLogic}
       });
       setInstructionTemplates(prev => {
         const updated = prev.map(t => {
-          if (t.isCustomized) return t;
           const defaultTemp = INITIAL_TEMPLATES.find(dt => dt.id === t.id);
+          if (t.isCustomized) {
+             return defaultTemp ? { ...t, category: defaultTemp.category } : t;
+          }
           return defaultTemp ? { ...t, ...defaultTemp } : t;
         });
         const existingIds = new Set(prev.map(t => t.id));
@@ -3056,23 +3073,8 @@ ${componentLogic}
 
 
   const handleGroupedTemplateToggle = (item: any) => {
-    if (!item.isGroupedType) {
-      toggleInstruction(item.id);
-      return;
-    }
-    
-    const activeId = selectedInstructionIds.find(id => {
-      const t = instructionTemplates.find(x => x.id === id);
-      return t?.typeId === item.typeId && t?.category === item.category;
-    });
-
-    if (activeId) {
-      toggleInstruction(activeId);
-    } else {
-      const defaultId = paperStyles[item.typeId as keyof typeof paperStyles];
-      const templateExists = instructionTemplates.some(t => t.id === defaultId);
-      toggleInstruction(templateExists ? (defaultId as string) : item.originalId);
-    }
+    // REMOVAL OF REPLACEMENT LOGICAL: User wants to select many exercises, even of same type.
+    toggleInstruction(item.originalId || item.id);
   };
 
   return (
@@ -3293,14 +3295,16 @@ ${componentLogic}
                     <button 
                       onClick={() => setIsPartBackgroundEnabled(!isPartBackgroundEnabled)}
                       className={`px-4 lg:px-6 py-2 rounded-lg text-[11px] font-bold flex items-center gap-2 transition-all whitespace-nowrap ${isPartBackgroundEnabled ? 'bg-emerald-600 text-white shadow-md' : 'text-slate-700 hover:bg-white/40'}`}
+                      title="Adds a background color to the entire exercise area"
                     >
-                      <i className={`fa-solid ${isPartBackgroundEnabled ? 'fa-square-check' : 'fa-square'} text-[10px]`}></i> Part BG
+                      <i className={`fa-solid ${isPartBackgroundEnabled ? 'fa-square-check' : 'fa-square'} text-[10px]`}></i> Content BG
                     </button>
                     <button 
                       onClick={() => setIsInstructionBackgroundEnabled(!isInstructionBackgroundEnabled)}
                       className={`px-4 lg:px-6 py-2 rounded-lg text-[11px] font-bold flex items-center gap-2 transition-all whitespace-nowrap ${isInstructionBackgroundEnabled ? 'bg-amber-600 text-white shadow-md' : 'text-slate-700 hover:bg-white/40'}`}
+                      title="Adds a background color only to the PART A, PART B heading tags"
                     >
-                      <i className={`fa-solid ${isInstructionBackgroundEnabled ? 'fa-square-check' : 'fa-square'} text-[10px]`}></i> Instruction BG
+                      <i className={`fa-solid ${isInstructionBackgroundEnabled ? 'fa-square-check' : 'fa-square'} text-[10px]`}></i> Header BG
                     </button>
                     <button 
                       onClick={() => setIsColorfulBackgroundEnabled(!isColorfulBackgroundEnabled)}
@@ -3321,90 +3325,42 @@ ${componentLogic}
 
             <div className="flex-1 overflow-y-auto p-8 no-scrollbar relative z-10">
               <div className="max-w-6xl mx-auto space-y-8">
-                {/* Split Layout: Templates Left | Global Config Center | Templates Right */}
-                <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
-                  {/* Templates Left (First Half) */}
-                  <div className="lg:col-span-1 space-y-4">
-                    <div className="flex items-center justify-between px-2 mb-4">
-                      <div className="flex items-center gap-2">
-                        <div className="h-1 w-4 bg-orange-500 rounded-full"></div>
-                        <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Exercise Templates</h3>
+                <div className="space-y-12">
+                  {/* Global Config Header */}
+                  <div className="bg-white rounded-[32px] p-6 lg:p-10 border border-slate-100 shadow-sm space-y-8 max-w-4xl mx-auto">
+                    {sourceMaterial && (
+                      <div className="flex items-center justify-center gap-3 bg-emerald-50 px-4 py-2 rounded-xl border border-emerald-100 w-fit mx-auto">
+                        <i className="fa-solid fa-file-circle-check text-emerald-500"></i>
+                        <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">{sourceMaterial.name} attached</span>
+                        <button onClick={() => setSourceMaterial(null)} className="text-emerald-400 hover:text-emerald-600 ml-2">
+                          <i className="fa-solid fa-xmark"></i>
+                        </button>
                       </div>
-                    </div>
-                    <div className="space-y-3">
-                      {uniqueGroupedTemplates
-                        .map((t, idx, arr) => {
-                          const midpoint = Math.ceil(arr.length / 2);
-                          if (idx >= midpoint) return null;
-                          const isSelected = t.isGroupedType 
-                            ? selectedInstructionIds.some(id => {
-                                const tmp = instructionTemplates.find(x => x.id === id);
-                                return tmp?.typeId === t.typeId && tmp?.category === t.category;
-                              })
-                            : selectedInstructionIds.includes(t.originalId || t.id);
-                          const cat = t.category?.toUpperCase();
-                          const colorClass = cat === 'VOCABULARY' ? 'emerald' : cat === 'READING' ? 'blue' : 'orange';
-                          const displayLabel = t.isGroupedType ? t.displayLabel : t.label;
-                          
-                          return (
-                            <div
-                              key={t.id}
-                              className={`group bg-white border rounded-2xl p-4 flex items-center justify-between hover:border-${colorClass}-200 hover:shadow-md transition-all cursor-pointer ${isSelected ? `border-${colorClass}-500 bg-${colorClass}-5/30` : 'border-slate-100'}`}
-                              onClick={() => handleGroupedTemplateToggle(t)}
-                            >
-                              <div className="flex items-center gap-3">
-                                <div className={`h-9 w-9 rounded-xl flex items-center justify-center transition-colors ${isSelected ? `bg-${colorClass}-600 text-white` : `bg-slate-50 text-slate-400 group-hover:bg-${colorClass}-50 group-hover:text-${colorClass}-500`}`}>
-                                  <i className="fa-solid fa-book text-sm"></i>
-                                </div>
-                                <div className="flex flex-col">
-                                  <span className={`text-[10px] font-bold uppercase tracking-tight ${isSelected ? 'text-slate-900' : 'text-slate-600 group-hover:text-slate-900'}`}>{displayLabel}</span>
-                                  {!t.isGroupedType && t.styleName && <span className="text-[7px] font-bold text-slate-400 uppercase tracking-widest">{t.styleName}</span>}
-                                </div>
-                              </div>
-                              <div className={`h-6 w-6 rounded-lg border flex items-center justify-center transition-all ${isSelected ? `bg-${colorClass}-600 border-${colorClass}-600 text-white` : `border-slate-100 text-slate-300 group-hover:border-${colorClass}-500 group-hover:text-${colorClass}-500`}`}>
-                                <i className={`fa-solid ${isSelected ? 'fa-check' : 'fa-plus'} text-[10px]`}></i>
-                              </div>
-                            </div>
-                          );
-                        })}
-                    </div>
-                  </div>
+                    )}
 
-                  {/* Center Config */}
-                  <div className="lg:col-span-2 space-y-8">
-                    <div className="bg-white rounded-[32px] p-6 lg:p-10 border border-slate-100 shadow-sm space-y-8">
-                      {sourceMaterial && (
-                        <div className="flex items-center gap-3 bg-emerald-50 px-4 py-2 rounded-xl border border-emerald-100 w-fit">
-                          <i className="fa-solid fa-file-circle-check text-emerald-500"></i>
-                          <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">{sourceMaterial.name} attached</span>
-                          <button onClick={() => setSourceMaterial(null)} className="text-emerald-400 hover:text-emerald-600 ml-2">
-                            <i className="fa-solid fa-xmark"></i>
-                          </button>
-                        </div>
-                      )}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      <div className="space-y-3">
+                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Language</label>
+                        <select 
+                          value={activeLanguage}
+                          onChange={(e) => setActiveLanguage(e.target.value)}
+                          className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-slate-700 font-bold text-sm outline-none focus:border-orange-200 transition-all appearance-none cursor-pointer"
+                        >
+                          {LANGUAGES.map(l => <option key={l} value={l}>{l}</option>)}
+                        </select>
+                      </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div className="space-y-3">
-                          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Language</label>
-                          <select 
-                            value={activeLanguage}
-                            onChange={(e) => setActiveLanguage(e.target.value)}
-                            className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-slate-700 font-bold text-sm outline-none focus:border-orange-200 transition-all appearance-none cursor-pointer"
-                          >
-                            {LANGUAGES.map(l => <option key={l} value={l}>{l}</option>)}
-                          </select>
-                        </div>
-
-                        <div className="space-y-3">
-                          <button 
-                            onClick={handleGenerate}
-                            disabled={isGenerating}
-                            className="w-full py-3 bg-orange-600 text-white rounded-xl text-[11px] font-bold uppercase tracking-widest flex items-center justify-center gap-3 hover:bg-orange-700 transition-all shadow-lg shadow-orange-200/50 active:scale-95 disabled:opacity-50"
-                          >
-                            {isGenerating ? <i className="fa-solid fa-spinner animate-spin"></i> : <i className="fa-solid fa-wand-magic-sparkles"></i>}
-                            Build Test
-                          </button>
-                          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Academic Level</label>
+                      <div className="space-y-3">
+                        <button 
+                          onClick={handleGenerate}
+                          disabled={isGenerating}
+                          className="w-full py-4 bg-orange-600 text-white rounded-2xl text-[12px] font-black uppercase tracking-widest flex items-center justify-center gap-3 hover:bg-orange-700 transition-all shadow-lg shadow-orange-200/50 active:scale-95 disabled:opacity-50"
+                        >
+                          {isGenerating ? <i className="fa-solid fa-spinner animate-spin"></i> : <i className="fa-solid fa-wand-magic-sparkles"></i>}
+                          Build Test
+                        </button>
+                        <div className="pt-2 text-center">
+                          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 block">Academic Level</label>
                           <select 
                             value={activeLevel}
                             onChange={(e) => setActiveLevel(e.target.value as AcademicLevel)}
@@ -3413,198 +3369,167 @@ ${componentLogic}
                             {ACADEMIC_LEVELS.map(l => <option key={l} value={l}>{l}</option>)}
                           </select>
                         </div>
+                      </div>
 
-                        <div className="space-y-3">
-                          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Universal Topic</label>
-                          <input 
-                            type="text"
-                            value={topic}
-                            onChange={(e) => setTopic(e.target.value)}
-                            placeholder=""
-                            className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-slate-700 font-bold text-sm outline-none focus:border-orange-200 transition-all placeholder:text-slate-300"
-                          />
-                        </div>
+                      <div className="space-y-3">
+                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Universal Topic</label>
+                        <input 
+                          type="text"
+                          value={topic}
+                          onChange={(e) => setTopic(e.target.value)}
+                          placeholder=""
+                          className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 text-slate-700 font-bold text-sm outline-none focus:border-orange-200 transition-all placeholder:text-slate-300"
+                        />
                       </div>
                     </div>
+                  </div>
 
-                    {/* Test Structure Section (Moved here for better flow) */}
-                    <div className="space-y-6">
-                      <div className="flex items-center justify-between px-2">
-                        <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Selected Exercises ({selectedInstructionIds.length})</h3>
+                  {/* EXERCISE TEMPLATES Grid */}
+                  <div>
+                    <div className="flex items-center justify-between px-4 mb-6">
+                      <div className="flex items-center gap-4">
+                        <div className="h-1.5 w-6 bg-orange-500 rounded-full"></div>
+                        <h3 className="text-[13px] font-black text-slate-800 uppercase tracking-widest">Exercise Templates</h3>
+                      </div>
+                      <div className="flex items-center gap-6">
+                        <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                          {selectedInstructionIds.filter(id => instructionTemplates.some(t => t.id === id && t.category?.toUpperCase() === activeModule.toUpperCase())).length} Selected
+                        </span>
                         {selectedInstructionIds.length > 0 && (
                           <button 
                             onClick={() => setSelectedInstructionIds([])}
-                            className="text-[10px] font-bold text-red-400 hover:text-red-600 uppercase tracking-widest transition-colors"
+                            className="px-4 py-2 border border-red-100 text-red-500 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-red-50 hover:border-red-200 transition-colors"
                           >
                             Clear All
                           </button>
                         )}
                       </div>
-                      
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {instructionTemplates
-                          .filter(t => t.category?.toUpperCase() === activeModule.toUpperCase() && selectedInstructionIds.includes(t.id))
-                          .sort((a, b) => {
-                            // Sort by typeId then id
-                            const aType = a.typeId || 'zzz';
-                            const bType = b.typeId || 'zzz';
-                            if (aType !== bType) return aType.localeCompare(bType);
-                            return a.id.localeCompare(b.id);
-                          })
-                          .map((t, idx) => {
-                            const curItems = itemCountOverrides[t.id] || 10;
-                            const curCols = columnOverrides[t.id] !== undefined ? columnOverrides[t.id] : (t.columnCount !== undefined ? t.columnCount : defaultColumnCount);
-                            
-                            // Diverse color mapping based on index
-                            const colors = ['orange', 'blue', 'emerald', 'rose', 'violet', 'amber', 'indigo', 'cyan'];
-                            const colorClass = colors[idx % colors.length];
-                            
-                            // Random divider color logic (visual only for the card)
-                            const dividerColors = ['#f97316', '#3b82f6', '#10b981', '#f43f5e', '#8b5cf6', '#f59e0b', '#6366f1', '#06b6d4'];
-                            const randomDividerColor = dividerColors[Math.floor(Math.random() * dividerColors.length)];
-                            
-                            // Relaxing backgrounds
-                            const backgrounds = [
-                              'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&q=80&w=400&h=200', // Forest
-                              'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=400&h=200', // Mountain
-                              'https://images.unsplash.com/photo-1505118380757-91f5f5632de0?auto=format&fit=crop&q=80&w=400&h=200', // Ocean
-                              'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&q=80&w=400&h=200', // Lake
-                              'https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&q=80&w=400&h=200', // Meadow
-                            ];
-                            const bgUrl = backgrounds[idx % backgrounds.length];
-
-                            return (
-                              <div key={t.id} className={`card-gradient-${colorClass} rounded-2xl p-3 border border-${colorClass}-100 compact-shadow group hover:shadow-md transition-all relative overflow-hidden`}>
-                                {/* Relaxing Background Overlay */}
-                                <div 
-                                  className="absolute inset-0 opacity-[0.08] pointer-events-none bg-cover bg-center mix-blend-multiply"
-                                  style={{ backgroundImage: `url(${bgUrl})` }}
-                                />
-                                
-                                <div className="absolute top-0 right-0 p-1 opacity-0 group-hover:opacity-100 transition-opacity z-10">
-                                  <button onClick={() => toggleInstruction(t.id)} className="h-6 w-6 bg-red-50 text-red-500 rounded-lg flex items-center justify-center hover:bg-red-500 hover:text-white transition-all shadow-sm">
-                                    <i className="fa-solid fa-trash-can text-[9px]"></i>
-                                  </button>
-                                </div>
-                                
-                                <div className="flex items-center gap-2 mb-2 relative z-10">
-                                  <div className={`h-7 w-7 bg-white text-${colorClass}-600 rounded-lg flex items-center justify-center shadow-sm border border-${colorClass}-100 flex-shrink-0`} style={{ borderLeftColor: randomDividerColor, borderLeftWidth: '3px' }}>
-                                    <i className="fa-solid fa-star text-[10px]"></i>
-                                  </div>
-                                  <div className="flex flex-col min-w-0">
-                                    <span className="text-[10px] font-black text-slate-800 uppercase tracking-tight leading-tight truncate">
-                                      {t.typeId === 'mcq' ? 'MCQ (Multiple Choice)' : 
-                                       t.typeId === 'matching' ? 'Matching' :
-                                       t.typeId === 'tf' ? 'True/False' :
-                                       t.typeId === 'circle' ? 'Circle / Check' :
-                                       t.typeId === 'completion' ? 'Sentence Completion' :
-                                       t.typeId === 'word_box' ? 'Word Box' :
-                                       t.typeId === 'cloze' ? 'Cloze Passage' :
-                                       t.typeId === 'speaking' ? 'Speaking' :
-                                       t.typeId === 'key_term' ? 'Matching' :
-                                       t.typeId === 'table' ? 'Tables & Grids' :
-                                       t.label}
-                                    </span>
-                                    {t.styleName && <span className={`text-[8px] font-bold text-${colorClass}-500 uppercase tracking-widest`}>{t.styleName}</span>}
-                                  </div>
-                                </div>
-                                
-                                <div className="flex flex-col gap-2 relative z-10">
-                                  <div className="space-y-1">
-                                    <div className="flex justify-between items-center px-1">
-                                      <span className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">Item</span>
-                                      <span className={`text-[9px] font-black text-${colorClass}-600`}>{curItems}</span>
-                                    </div>
-                                    <div className="flex bg-white/60 backdrop-blur-sm rounded-lg p-0.5 gap-0.5 border border-slate-100 shadow-inner">
-                                      {[5, 10, 15, 20, 25, 30].map(num => (
-                                        <button 
-                                          key={num} 
-                                          onClick={() => setItemCount(t.id, num)} 
-                                          className={`flex-1 h-5 rounded-md text-[8px] font-bold transition-all ${curItems === num ? `bg-white text-${colorClass}-600 shadow-sm border border-${colorClass}-50` : 'text-slate-400 hover:text-slate-600'}`}
-                                        >
-                                          {num}
-                                        </button>
-                                      ))}
-                                    </div>
-                                  </div>
-                                  <div className="space-y-1">
-                                    <div className="flex justify-between items-center px-1">
-                                      <span className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">Column</span>
-                                      <span className="text-[9px] font-black text-slate-600">{curCols || 'L'}</span>
-                                    </div>
-                                    <div className="flex bg-white/60 backdrop-blur-sm rounded-lg p-0.5 gap-0.5 border border-slate-100 shadow-inner">
-                                      {[0, 1, 2, 3, 4, 6].map(num => (
-                                        <button 
-                                          key={num} 
-                                          onClick={() => setColumnOverrides(prev => ({ ...prev, [t.id]: num }))} 
-                                          className={`flex-1 h-5 rounded-md text-[8px] font-bold transition-all ${curCols === num ? `bg-white text-${colorClass}-600 shadow-sm border border-${colorClass}-50` : 'text-slate-400 hover:text-slate-600'}`}
-                                        >
-                                          {num === 0 ? 'L' : num}
-                                        </button>
-                                      ))}
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            );
-                          })}
-
-                        {selectedInstructionIds.length === 0 && (
-                          <div className="md:col-span-2 h-40 border-2 border-dashed border-slate-200 rounded-[32px] bg-slate-50/50 flex flex-col items-center justify-center text-center p-6">
-                            <div className="h-10 w-10 bg-white rounded-full flex items-center justify-center text-slate-200 mb-3 shadow-sm">
-                              <i className="fa-solid fa-plus text-lg"></i>
-                            </div>
-                            <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">No Exercises Selected</h4>
-                          </div>
-                        )}
-                      </div>
                     </div>
-                  </div>
+                    
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-4">
+                      {(() => {
+                        const COLORS = [
+                          { border: 'border-orange-500', bg: 'bg-orange-50', text: 'text-orange-500', solid: 'bg-orange-500' },
+                          { border: 'border-emerald-500', bg: 'bg-emerald-50', text: 'text-emerald-500', solid: 'bg-emerald-500' },
+                          { border: 'border-blue-500', bg: 'bg-blue-50', text: 'text-blue-500', solid: 'bg-blue-500' },
+                          { border: 'border-rose-500', bg: 'bg-rose-50', text: 'text-rose-500', solid: 'bg-rose-500' },
+                          { border: 'border-violet-500', bg: 'bg-violet-50', text: 'text-violet-500', solid: 'bg-violet-500' },
+                          { border: 'border-amber-500', bg: 'bg-amber-50', text: 'text-amber-500', solid: 'bg-amber-500' },
+                          { border: 'border-cyan-500', bg: 'bg-cyan-50', text: 'text-cyan-500', solid: 'bg-cyan-500' },
+                          { border: 'border-pink-500', bg: 'bg-pink-50', text: 'text-pink-500', solid: 'bg-pink-500' }
+                        ];
 
-                  {/* Templates Right (Second Half) */}
-                  <div className="lg:col-span-1 space-y-4">
-                    <div className="flex items-center justify-between px-2 mb-4">
-                      <div className="flex items-center gap-2">
-                        <div className="h-1 w-4 bg-orange-500 rounded-full opacity-0"></div>
-                        <h3 className="text-[10px] font-black text-transparent select-none uppercase tracking-widest">More Templates</h3>
-                      </div>
-                    </div>
-                    <div className="space-y-3">
-                      {uniqueGroupedTemplates
-                        .map((t, idx, arr) => {
-                          const midpoint = Math.ceil(arr.length / 2);
-                          if (idx < midpoint) return null;
-                          const isSelected = t.isGroupedType 
-                            ? selectedInstructionIds.some(id => {
-                                const tmp = instructionTemplates.find(x => x.id === id);
-                                return tmp?.typeId === t.typeId && tmp?.category === t.category;
-                              })
-                            : selectedInstructionIds.includes(t.originalId || t.id);
-                          const cat = t.category?.toUpperCase();
-                          const colorClass = cat === 'VOCABULARY' ? 'emerald' : cat === 'READING' ? 'blue' : 'orange';
-                          const displayLabel = t.isGroupedType ? t.displayLabel : t.label;
-                          
+                        const categoryTemplates = instructionTemplates.filter(t => {
+    if (t.category?.toUpperCase() !== activeModule.toUpperCase()) return false;
+    
+    // Explicitly hide vocabulary-specific exercises if they appear in Grammar or Reading
+    if (activeModule.toUpperCase() === 'GRAMMAR' || activeModule.toUpperCase() === 'READING') {
+      const forbidden = [
+        'STUDY TABLE', 'MATCHING', 'MCQ', 'SPEAKING', 
+        'STUDY EXAMPLE', 'SUPPLY KEY TERMS', 'SYNONYM WRITING', 
+        'T/F', 'VOCABULARY BOX'
+      ];
+      if (forbidden.includes(t.label?.toUpperCase() || '')) {
+        return false;
+      }
+    }
+    return true;
+  });
+                        
+                        return categoryTemplates.map((t, idx) => {
+                          const isSelected = selectedInstructionIds.includes(t.id);
+                          const selectedInCategory = selectedInstructionIds.filter(id => categoryTemplates.some(ct => ct.id === id));
+                          const selectedIndex = selectedInCategory.indexOf(t.id);
+                          const partLetter = isSelected ? String.fromCharCode(65 + selectedIndex) : '';
+                          const color = COLORS[idx % COLORS.length];
+
+                          const SUPERSTARS = [
+                            { name: 'MESSI', url: 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=400&q=80' },
+                            { name: 'RONALDO', url: 'https://images.unsplash.com/photo-1518605368461-1ee7c68cd46a?auto=format&fit=crop&w=400&q=80' },
+                            { name: 'SKILLS', url: 'https://images.unsplash.com/photo-1552318965-6e6be7484ada?auto=format&fit=crop&w=400&q=80' },
+                            { name: 'BALL', url: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=400&q=80' },
+                            { name: 'STADIUM', url: 'https://images.unsplash.com/photo-1516478177722-ee3158c54117?auto=format&fit=crop&w=400&q=80' },
+                            { name: 'CHAMPIONS', url: 'https://images.unsplash.com/photo-1589487391730-58f20eb2c308?auto=format&fit=crop&w=400&q=80' },
+                            { name: 'TROPHY', url: 'https://images.unsplash.com/photo-1577915335191-c2763297a70a?auto=format&fit=crop&w=400&q=80' },
+                            { name: 'KICK', url: 'https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=400&q=80' }
+                          ];
+                          const superstar = SUPERSTARS[idx % SUPERSTARS.length];
+
                           return (
-                            <div
+                            <div 
                               key={t.id}
-                              className={`group bg-white border rounded-2xl p-4 flex items-center justify-between hover:border-${colorClass}-200 hover:shadow-md transition-all cursor-pointer ${isSelected ? `border-${colorClass}-500 bg-${colorClass}-5/30` : 'border-slate-100'}`}
-                              onClick={() => handleGroupedTemplateToggle(t)}
+                              onClick={() => toggleInstruction(t.id)}
+                              className={`relative border-2 rounded-[24px] p-4 cursor-pointer transition-all flex flex-col h-[280px] overflow-hidden group ${isSelected ? color.border + ' shadow-xl scale-[1.02] z-10' : 'border-slate-100 shadow-sm hover:border-slate-200'} `}
                             >
-                              <div className="flex items-center gap-3">
-                                <div className={`h-9 w-9 rounded-xl flex items-center justify-center transition-colors ${isSelected ? `bg-${colorClass}-600 text-white` : `bg-slate-50 text-slate-400 group-hover:bg-${colorClass}-50 group-hover:text-${colorClass}-500`}`}>
-                                  <i className="fa-solid fa-book text-sm"></i>
-                                </div>
-                                <div className="flex flex-col">
-                                  <span className={`text-[10px] font-bold uppercase tracking-tight ${isSelected ? 'text-slate-900' : 'text-slate-600 group-hover:text-slate-900'}`}>{displayLabel}</span>
-                                  {!t.isGroupedType && t.styleName && <span className="text-[7px] font-bold text-slate-400 uppercase tracking-widest">{t.styleName}</span>}
+                              {/* Superstar Background Image */}
+                              <div 
+                                className={`absolute inset-0 bg-cover bg-[center_10%] transition-all duration-[700ms] z-0 ${isSelected ? 'opacity-100 scale-105 saturate-150 brightness-110' : 'opacity-[0.85] grayscale-[0.2] group-hover:opacity-100 group-hover:grayscale-0 group-hover:scale-105 group-hover:saturate-110'}`}
+                                style={{ backgroundImage: `url('${superstar.url}')` }}
+                              />
+                              <div className={`absolute inset-0 bg-gradient-to-t ${isSelected ? 'from-black/80 via-black/20 to-transparent' : 'from-black/70 via-black/30 to-black/10'} z-0 pointer-events-none`}></div>
+
+                              <div className="flex flex-col items-start mb-2 relative z-10">
+                                <h3 className={`text-[15px] drop-shadow-md font-black uppercase tracking-tight line-clamp-2 leading-snug w-[85%] text-left text-white`}>
+                                  {t.label}
+                                </h3>
+                                <div className={`mt-2 ${color.solid} text-white text-[9px] font-black tracking-widest px-2.5 py-1 rounded-md uppercase shadow-lg inline-flex items-center gap-1`}>
+                                  <i className="fa-solid fa-star text-[8px]"></i> {superstar.name}
                                 </div>
                               </div>
-                              <div className={`h-6 w-6 rounded-lg border flex items-center justify-center transition-all ${isSelected ? `bg-${colorClass}-600 border-${colorClass}-600 text-white` : `border-slate-100 text-slate-300 group-hover:border-${colorClass}-500 group-hover:text-${colorClass}-500`}`}>
-                                <i className={`fa-solid ${isSelected ? 'fa-check' : 'fa-plus'} text-[10px]`}></i>
+
+                              <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                                {isSelected ? (
+                                  <div className={`h-[80px] w-[80px] rounded-[24px] flex shrink-0 items-center justify-center text-white ${color.solid} text-[44px] font-black shadow-2xl scale-100 hover:scale-110 transition-transform`}>
+                                    {partLetter}
+                                  </div>
+                                ) : (
+                                  <div className="h-[80px] w-[80px] shrink-0 rounded-[24px] border-[5px] border-white/60 shadow-sm bg-black/20 backdrop-blur-sm transition-transform group-hover:scale-110"></div>
+                                )}
+                              </div>
+
+                              <div className="relative z-10 mb-2">
+                              </div>
+
+                              <div className="mt-auto space-y-3 relative z-10" onClick={e => e.stopPropagation()}>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-[9px] font-black tracking-widest text-white/90 drop-shadow-md">ITEMS</span>
+                                  <div className="flex items-center gap-1 flex-1 p-1 bg-white/80 backdrop-blur-sm border border-slate-100 rounded-lg">
+                                    {[5,10,15,20,25,30].map(n => {
+                                      const isActive = (itemCountOverrides[t.id] || 10) === n;
+                                      return (
+                                         <button 
+                                           key={n}
+                                           onClick={() => setItemCountOverrides(prev => ({...prev, [t.id]: n}))}
+                                           className={`flex-1 h-5 rounded flex items-center justify-center text-[10px] font-bold transition-all ${isActive ? `${color.solid} text-white shadow-sm` : 'text-slate-500 hover:bg-slate-50'}`}
+                                         >
+                                           {n}
+                                         </button>
+                                      )
+                                    })}
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-[9px] font-black tracking-widest text-white/90 drop-shadow-md">COLS</span>
+                                  <div className="flex items-center gap-1 flex-1 p-1 bg-white/80 backdrop-blur-sm border border-slate-100 rounded-lg">
+                                    {[1,2,3,4,5,6].map(n => {
+                                      const isActive = (columnOverrides[t.id] || t.columnCount || 1) === n;
+                                      return (
+                                         <button 
+                                           key={n}
+                                           onClick={() => setColumnOverrides(prev => ({...prev, [t.id]: n}))}
+                                           className={`flex-1 h-5 rounded flex items-center justify-center text-[10px] font-bold transition-all ${isActive ? `${color.solid} text-white shadow-sm` : 'text-slate-500 hover:bg-slate-50'}`}
+                                         >
+                                           {n}
+                                         </button>
+                                      )
+                                    })}
+                                  </div>
+                                </div>
                               </div>
                             </div>
                           );
-                        })}
+                        });
+                      })()}
                     </div>
                   </div>
                 </div>
